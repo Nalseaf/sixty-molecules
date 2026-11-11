@@ -1,0 +1,437 @@
+<meta charset="utf-8">
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Sixty Molecules</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one narrow reading column on a dark plasma-and-plum ground; each chapter is a short text beat followed by one thing to play with. */
+:root{
+  --bg:#1B0F1F; --panel:#25162B; --ink:#F6EEE3; --muted:#BCABBB; --line:#402C48;
+  --plasma:#F1D36B; --plasma-dim:#7C6A3C; --case:#FF6B9A; --ctrl:#6CCFC9; --dim:#4A3852;
+  --f-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-data:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6}
+.wrap{max-width:820px;margin:0 auto;padding-block:40px 72px;
+  padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:72px}
+section,header.hero{display:flex;flex-direction:column;gap:18px;min-width:0}
+h1,h2{font-family:var(--f-display);font-weight:600;margin:0;text-wrap:balance;letter-spacing:-.015em}
+h1{font-size:clamp(38px,8vw,68px);line-height:1.02}
+h1 em,h2 em{font-style:italic;font-weight:400;color:var(--plasma)}
+h2{font-size:clamp(28px,5.2vw,40px);line-height:1.1}
+p{margin:0;max-width:62ch}
+p.big{font-size:20px;color:var(--ink)}
+.muted{color:var(--muted)}
+.kicker{font:500 12px var(--f-data);letter-spacing:.12em;text-transform:uppercase;color:var(--plasma)}
+.num{font-family:var(--f-data);font-variant-numeric:tabular-nums}
+a{color:var(--plasma)}
+b{font-weight:600}
+
+/* widgets */
+.widget{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.readout{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}
+.readout strong{font-family:var(--f-display);font-size:44px;line-height:1;font-weight:600;color:var(--plasma);font-variant-numeric:tabular-nums}
+.readout span{color:var(--muted);font-size:15px}
+button{font:500 14px var(--f-body);color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer}
+button:hover{border-color:var(--plasma)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--plasma);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--plasma);border-color:var(--plasma);color:var(--bg)}
+button.go{background:var(--case);border-color:var(--case);color:var(--bg);font-weight:600;padding:10px 18px}
+button.small{font-size:13px;padding:5px 11px}
+.hint{font-size:14px;color:var(--muted)}
+svg{display:block;width:100%;height:auto}
+.ax{fill:var(--muted);font:11px var(--f-data)}
+.gl{stroke:var(--line);stroke-width:1}
+
+/* hero dots */
+#field{display:block;width:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;background:var(--plasma)}
+.dot.case{background:var(--case)}.dot.ctrl{background:var(--ctrl)}.dot.dim{background:var(--dim)}.dot.pd{background:var(--plasma-dim)}
+
+/* slider */
+input[type=range]{width:100%;accent-color:var(--plasma);height:28px;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:13px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;display:flex;flex-direction:column;line-height:1.3;min-width:0}
+.chip b{font-weight:500}
+.chip small{font-family:var(--f-data);font-size:11px;color:var(--muted)}
+.chip.kept{border-color:var(--plasma)}
+.chip.kept small{color:var(--plasma)}
+.chip.out{opacity:.55}
+.chip.out b{text-decoration:line-through}
+
+/* volcano */
+#volcano circle.m{fill:var(--dim);stroke:transparent;stroke-width:9;cursor:pointer;transition:transform .9s cubic-bezier(.3,.7,.2,1),fill .5s,opacity .3s}
+#volcano circle.up{fill:var(--case)}
+#volcano circle.down{fill:var(--ctrl)}
+#volcano circle.fade{opacity:.12}
+#ring{fill:none;stroke:var(--ink);stroke-width:2;pointer-events:none;transition:transform .9s cubic-bezier(.3,.7,.2,1)}
+#info{border-top:1px solid var(--line);padding-top:12px;min-height:74px;font-size:15px}
+#info b{font-family:var(--f-display);font-size:20px;font-weight:600}
+#info .tag{font-family:var(--f-data);font-size:11px;border:1px solid var(--line);border-radius:4px;padding:1px 6px;color:var(--muted);margin-left:8px;white-space:nowrap}
+
+/* quiz */
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.opts button{border-radius:12px;padding:14px;text-align:left;font-size:16px}
+.opts button small{display:block;color:var(--muted);font-size:13px;font-weight:400}
+.opts button.right{border-color:var(--plasma);background:var(--plasma);color:var(--bg)}
+.opts button.right small{color:var(--bg)}
+.opts button.wrong{border-color:var(--case)}
+.rank{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr) auto;gap:6px 12px;align-items:center;font-size:14px}
+.rank i{display:block;height:10px;border-radius:5px;background:var(--plasma);min-width:3px}
+.rank span.num{color:var(--muted);font-size:13px;white-space:nowrap}
+
+/* staircase */
+.stairs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;align-items:end;height:220px}
+.stair{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;gap:6px;min-width:0}
+.stair i{display:block;width:100%;background:var(--plasma);border-radius:6px 6px 0 0;min-height:3px}
+.stair.dx i{background:var(--case)}
+.stair b{font-family:var(--f-data);font-weight:500;font-size:14px}
+.stairlab{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;text-align:center;font-size:12px;color:var(--muted);line-height:1.3}
+.stairlab b{display:block;color:var(--ink);font-family:var(--f-data);font-weight:500;font-size:13px}
+
+/* people grids */
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.people{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;max-width:260px}
+.people i{display:block;aspect-ratio:1;border-radius:50%;background:var(--dim)}
+.people i.on{background:var(--case)}
+.pair h3{margin:0 0 8px;font:500 15px var(--f-body)}
+.pair h3 strong{font-family:var(--f-display);font-size:30px;font-weight:600;color:var(--case);margin-right:6px}
+
+.limits{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.limits li{border-top:2px solid var(--plasma);padding-top:10px;font-size:15px;color:var(--muted)}
+.limits li b{display:block;color:var(--ink);font-size:16px}
+footer{font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:8px}
+
+@media (max-width:560px){
+  body{font-size:16px}
+  .wrap{gap:56px}
+  .opts,.limits,.pair{grid-template-columns:minmax(0,1fr)}
+  .stairs{height:170px;gap:6px}.stairlab{gap:6px}
+  .rank{grid-template-columns:minmax(0,96px) minmax(0,1fr) auto}
+}
+@media (prefers-reduced-motion:reduce){
+  #volcano circle.m,#ring{transition:none}
+}
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <h1>358 people gave blood. <em>Sixty molecules</em> gave the game away.</h1>
+    <p class="big">A lab measured 758 different molecules in each person's plasma. About half of the people had type 2 diabetes. The question: which molecules can tell the two groups apart?</p>
+    <div class="widget">
+      <canvas id="field" aria-label="A field of 758 dots, one per molecule measured. 257 are greyed out as dropped, 441 were tested and showed no difference, 29 are higher in diabetes and 31 are lower."></canvas>
+      <div class="row" role="group" aria-label="Stage of the analysis">
+        <button id="st1" type="button" aria-pressed="false">758 measured</button>
+        <button id="st2" type="button" aria-pressed="false">501 trusted</button>
+        <button id="st3" type="button" aria-pressed="true">60 differ</button>
+        <button id="replay" type="button" class="small">Replay</button>
+      </div>
+      <div class="legend">
+        <span><span class="dot case"></span>higher in diabetes (29)</span>
+        <span><span class="dot ctrl"></span>lower in diabetes (31)</span>
+        <span><span class="dot pd"></span>tested, no difference</span>
+        <span><span class="dot dim"></span>dropped</span>
+      </div>
+    </div>
+    <p class="muted">Each dot is one molecule. The three buttons are the three chapters of this story.</p>
+  </header>
+
+  <section>
+    <div class="kicker">Chapter 1 · The clean-up</div>
+    <h2>First, decide which molecules to <em>trust</em></h2>
+    <p>The machine can't find every molecule in every person. Some are simply too rare. If a molecule is missing in most people, any comparison built on it is shaky, so it has to go.</p>
+    <p>How strict should the rule be? Drag the slider and watch what survives.</p>
+    <div class="widget">
+      <label for="cut" class="hint">Drop a molecule if it is missing in more than <b class="num" id="cutv">30%</b> of people</label>
+      <input type="range" id="cut" min="0" max="100" step="5" value="30">
+      <div class="readout"><strong id="keptn">501</strong><span>of 758 molecules kept</span>
+        <button id="cutreset" type="button" class="small">Use the study's 30%</button></div>
+      <svg id="misschart" viewBox="0 0 700 190" role="img" aria-label="All 758 molecules ordered from most to least missing, with the chosen cut-off line"></svg>
+      <div class="chips" id="chips"></div>
+    </div>
+    <p class="muted">Notice who gets cut first: the things only some people have in their blood. Painkillers, a sweetener, a marker of smoking. Caffeine never leaves. It was found in every single sample.</p>
+  </section>
+
+  <section>
+    <div class="kicker">Chapter 2 · The trap</div>
+    <h2>Compare the groups, and <em>155</em> molecules light up</h2>
+    <p>That looks like a huge result. It is partly an illusion. In this study, people with diabetes were on average 53 years old and people without were 40. Blood changes with age. Some of those 155 are telling us who is older.</p>
+    <p>Press the pink button to put age, sex and BMI into the model, and watch the dots that were only riding along fall back down.</p>
+    <div class="widget">
+      <div class="readout"><strong id="vcount">155</strong><span id="vlabel">molecules look different between the groups</span></div>
+      <div class="row">
+        <button id="adjust" type="button" class="go">Account for age, sex and BMI</button>
+        <span class="hint" id="vmode">Showing: raw comparison</span>
+      </div>
+      <svg id="volcano" viewBox="0 0 760 470" role="img" aria-label="Each dot is a molecule. Left means lower in diabetes, right means higher, and higher up means stronger evidence."></svg>
+      <div class="row" id="classes" role="group" aria-label="Filter by type of molecule"></div>
+      <div id="info"></div>
+      <div class="row" id="picks"><span class="hint">Tap a dot, or try:</span></div>
+    </div>
+    <p class="muted">After the adjustment, 60 molecules still stand: 29 higher in diabetes and 31 lower.</p>
+  </section>
+
+  <section>
+    <div class="kicker">Chapter 3 · The surprise</div>
+    <h2>Quick guess: which one is the <em>best</em> tell?</h2>
+    <p>Out of the 501 molecules tested, which separates people with diabetes from people without most clearly?</p>
+    <div class="widget">
+      <div class="opts" id="opts"></div>
+      <div id="reveal" hidden>
+        <div class="rank" id="rank"></div>
+      </div>
+      <p id="verdict" class="hint">Pick one to see the ranking.</p>
+    </div>
+    <p>The winner is a sugar most people have never heard of: <b>1,5-anhydroglucitol</b>. It comes from food and the kidneys normally recycle it back into the blood. When blood sugar runs high, glucose spills into the urine and blocks that recycling, so 1,5-anhydroglucitol drains away.</p>
+    <p>In this cohort, people with diabetes had about <b>34%</b> of the level seen in people without. It follows HbA1c, the standard long-term blood sugar test, like a staircase.</p>
+    <div class="widget">
+      <div class="hint">Typical 1,5-anhydroglucitol level, by HbA1c range (lowest range = 100%)</div>
+      <div class="stairs" id="stairs"></div>
+      <div class="stairlab" id="stairlab"></div>
+      <div class="legend"><span><span class="dot"></span>below the diagnostic line</span><span><span class="dot case"></span>HbA1c 6.5% or more, the usual line for diagnosing diabetes</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">Chapter 4 · The fingerprints</div>
+    <h2>Blood also remembers your <em>pharmacy</em></h2>
+    <p>Remember the molecules that were dropped in Chapter 1 for being too rare? One of them was metformin, the most common diabetes drug. It was rare overall for a simple reason.</p>
+    <div class="widget">
+      <div class="pair">
+        <div><h3><strong>51%</strong>of people with diabetes</h3><div class="people" id="pg1" role="img" aria-label="51 of 100 dots filled"></div></div>
+        <div><h3><strong>3%</strong>of people without</h3><div class="people" id="pg2" role="img" aria-label="3 of 100 dots filled"></div></div>
+      </div>
+      <div class="hint">Share of people with detectable metformin in their plasma</div>
+    </div>
+    <p>This matters for reading the results. When a molecule differs between the groups, it could be the disease. It could also be the treatment. A breakdown product of aspirin is among the sixty, which more likely reflects what people take than the disease itself.</p>
+  </section>
+
+
+</div>
+
+<script>
+(function(){
+var D = {"counts":{"dropped":257,"ns":441,"up":29,"down":31},"missing":[0.151,0.145,0.056,0.036,0.081,0.053,0.0,0.031,0.0,0.0,0.0,0.0,0.039,0.008,0.0,0.0,0.975,0.0,0.0,0.422,0.134,0.064,0.0,0.184,0.0,0.0,0.0,0.0,0.0,0.0,0.204,0.0,0.0,0.0,0.011,0.0,0.003,0.006,0.0,0.006,0.042,0.0,0.05,0.067,0.101,0.014,0.0,0.173,0.869,0.0,0.0,0.053,0.067,0.008,0.383,0.0,0.0,0.0,0.006,0.927,0.858,0.003,0.092,0.0,0.084,0.145,0.0,0.017,0.0,0.061,0.534,0.0,0.891,0.925,0.0,0.003,0.042,0.0,0.034,0.115,0.0,0.126,0.006,0.0,0.0,0.207,0.0,0.0,0.109,0.045,0.265,0.304,0.011,0.76,0.743,0.0,0.0,0.095,0.045,0.268,0.14,0.0,0.011,0.62,0.0,0.031,0.008,0.76,0.003,0.0,0.693,0.656,0.017,0.662,0.047,0.0,0.137,0.0,0.014,0.0,0.536,0.0,0.036,0.916,0.246,0.0,0.011,0.006,0.997,0.0,0.003,0.0,0.983,0.047,0.008,0.0,0.0,0.0,0.944,0.0,0.0,0.0,0.159,0.285,0.067,0.0,0.003,0.0,0.0,0.461,0.718,0.0,0.0,0.003,0.209,0.0,0.0,0.0,0.978,0.98,0.978,0.0,0.0,0.978,0.545,0.031,0.0,0.0,0.355,0.128,0.028,0.0,0.0,0.994,0.014,0.025,0.818,0.0,0.0,0.115,0.006,0.006,0.123,0.165,0.897,0.003,0.0,0.0,0.989,0.0,0.0,0.858,0.182,0.008,0.997,0.0,0.0,0.008,0.073,0.989,0.673,0.0,0.0,0.0,0.003,0.0,0.0,0.017,0.997,0.701,0.986,0.0,0.992,0.986,0.101,0.821,0.0,0.006,0.0,0.0,0.0,0.0,0.006,0.997,0.008,0.0,0.0,0.0,0.0,0.0,0.039,0.0,0.011,0.0,0.006,0.006,0.02,0.154,0.0,0.025,0.006,0.006,0.0,0.0,0.0,0.0,0.0,0.296,0.223,0.176,0.271,0.925,0.969,0.011,0.961,0.989,0.0,0.003,0.637,0.385,0.003,0.006,0.003,0.0,0.156,0.003,0.006,0.0,0.536,0.0,0.112,0.0,0.19,0.0,0.0,0.0,0.989,0.997,0.0,0.0,0.335,0.696,0.534,0.047,0.0,0.0,0.723,0.0,0.997,0.223,0.698,0.989,0.989,0.0,0.0,0.011,0.028,0.008,0.0,0.017,0.003,0.089,0.022,0.436,0.492,0.0,0.028,0.265,0.0,0.123,0.053,0.986,0.997,0.0,0.992,0.0,0.017,0.003,0.994,0.0,0.0,0.989,0.014,0.989,0.821,0.0,0.0,0.008,0.0,0.0,0.0,0.0,0.02,0.0,0.0,0.43,0.0,0.0,0.12,0.078,0.0,0.0,0.008,0.0,0.106,0.0,0.006,0.0,0.0,0.0,0.0,0.986,0.0,0.0,0.047,0.0,0.112,0.989,0.0,0.799,0.36,0.642,0.064,0.427,0.0,0.059,0.249,0.003,0.117,0.0,0.196,0.0,0.008,0.014,0.793,0.084,0.087,0.003,0.159,0.006,0.006,0.014,0.011,0.0,0.115,0.115,0.084,0.0,0.986,0.997,0.056,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.575,0.0,0.039,0.17,0.05,0.179,0.075,0.039,0.0,0.014,0.0,0.011,0.0,0.536,0.0,0.0,0.006,0.385,0.0,0.0,0.0,0.003,0.078,0.207,0.0,0.112,0.006,0.011,0.254,0.0,0.0,0.126,0.034,0.008,0.0,0.0,0.022,0.039,0.014,0.025,0.251,0.701,0.092,0.042,0.022,0.022,0.0,0.0,0.0,0.0,0.324,0.0,0.394,0.045,0.0,0.0,0.0,0.0,0.567,0.872,0.684,0.056,0.0,0.006,0.0,0.0,0.978,0.975,0.534,0.682,0.564,0.081,0.006,0.017,0.52,0.818,0.377,0.969,0.045,0.025,0.0,0.712,0.098,0.318,0.791,0.0,0.223,0.092,0.609,0.0,0.075,0.006,0.997,0.106,0.003,0.0,0.198,0.087,0.994,0.779,0.148,0.142,0.006,0.997,0.997,0.997,0.997,0.997,0.997,0.997,0.732,0.503,0.81,0.075,0.218,0.112,0.064,0.427,0.944,0.872,0.517,0.818,0.83,0.765,0.101,0.229,0.302,0.0,0.003,0.531,0.439,0.207,0.087,0.0,0.095,0.0,0.324,0.684,0.402,0.754,0.88,0.059,0.584,0.02,0.542,0.207,0.682,0.947,0.98,0.0,0.634,0.525,0.983,0.514,0.911,0.763,0.969,0.193,0.969,0.525,0.48,0.567,0.606,0.006,0.05,0.117,0.003,0.346,0.182,0.841,0.0,0.101,0.128,0.053,0.05,0.011,0.028,0.279,0.983,0.02,0.989,0.939,0.006,0.207,0.55,0.704,0.578,0.176,0.036,0.0,0.204,0.997,0.989,0.014,0.43,0.0,0.349,0.394,0.891,0.039,0.978,0.047,0.006,0.003,0.768,0.003,0.374,0.081,0.673,0.064,0.994,0.98,0.263,0.053,0.268,0.489,0.251,0.0,0.011,0.321,0.02,0.939,0.587,0.76,0.0,0.986,0.813,0.006,0.83,0.542,0.263,0.712,0.402,0.022,0.263,0.628,0.02,0.003,0.011,0.106,0.039,0.034,0.715,0.95,0.182,0.145,0.299,0.321,0.145,0.466,0.045,0.964,0.277,0.036,0.0,0.994,0.5,0.036,0.034,0.478,0.863,0.422,0.939,0.824,0.863,0.587,0.036,0.939,0.782,0.802,0.154,0.989,0.0,0.313,0.592,0.642,0.807,0.33,0.961,0.95,0.992,0.997,0.953,0.939,0.997,0.983,0.975,0.0,0.98,0.02,0.844,0.525,0.0,0.0,0.0,0.053,0.416,0.265,0.796,0.003,0.335,0.249,0.939,0.863,0.83,0.075,0.701,0.327,0.617,0.0,0.52,0.064,0.983,0.899,0.869,0.966,0.003,0.235,0.726,0.017,0.992,0.321,0.466,0.978,0.028,0.587,0.089,0.003,0.034,0.229,0.056,0.916,0.525,0.992,0.858,0.874,0.858,0.76,0.592,0.07,0.832,0.774,0.006,0.494,0.997,0.642,0.304,0.059,0.983,0.832,0.737,0.682,0.0,0.0,0.595,0.997,0.0,0.006,0.763,0.95],"chips":[{"label":"Caffeine","missing":0.003},{"label":"Salicylate (aspirin)","missing":0.36},{"label":"Metformin (diabetes drug)","missing":0.723},{"label":"Saccharin (sweetener)","missing":0.799},{"label":"Cotinine (nicotine marker)","missing":0.818},{"label":"Ibuprofen","missing":0.961}],"mets":[{"n":"1,5-anhydroglucitol (1,5-AG)","c":"Carbohydrate","g":"Carbohydrate","a":[-1.548,29.51],"u":[-1.562,35.81],"sa":1,"su":1,"s":"1,5-anhydroglucitol"},{"n":"glucose","c":"Carbohydrate","g":"Carbohydrate","a":[0.601,24.08],"u":[0.583,28.33],"sa":1,"su":1},{"n":"mannose","c":"Carbohydrate","g":"Carbohydrate","a":[0.736,23.04],"u":[0.79,31.82],"sa":1,"su":1},{"n":"X - 18221","c":"Unidentified","g":"Unidentified","a":[0.649,18.96],"u":[0.64,23.48],"sa":1,"su":1},{"n":"gluconate","c":"Carbohydrate","g":"Carbohydrate","a":[0.672,17.72],"u":[0.784,27.66],"sa":1,"su":1},{"n":"fructose","c":"Carbohydrate","g":"Carbohydrate","a":[0.743,12.9],"u":[0.75,17.15],"sa":1,"su":1},{"n":"X - 11315","c":"Unidentified","g":"Unidentified","a":[-0.918,12.37],"u":[-0.843,13.56],"sa":1,"su":1},{"n":"X - 19437","c":"Unidentified","g":"Unidentified","a":[-0.695,11.63],"u":[-0.702,15.17],"sa":1,"su":1},{"n":"X - 11429","c":"Unidentified","g":"Unidentified","a":[-0.342,9.64],"u":[-0.261,7.84],"sa":1,"su":1},{"n":"pipecolate","c":"Amino acid","g":"Amino acid","a":[0.468,9.12],"u":[0.461,11.82],"sa":1,"su":1},{"n":"pyruvate","c":"Carbohydrate","g":"Carbohydrate","a":[0.385,8.52],"u":[0.354,9.53],"sa":1,"su":1},{"n":"beta-hydroxypyruvate","c":"Amino acid","g":"Amino acid","a":[0.676,8.41],"u":[0.683,11.4],"sa":1,"su":1},{"n":"X - 15497","c":"Unidentified","g":"Unidentified","a":[0.533,7.53],"u":[0.742,16.96],"sa":1,"su":1},{"n":"2-hydroxybutyrate (AHB)","c":"Amino acid","g":"Amino acid","a":[0.462,6.89],"u":[0.462,9.0],"sa":1,"su":1},{"n":"citrulline","c":"Amino acid","g":"Amino acid","a":[-0.299,6.49],"u":[-0.211,4.4],"sa":1,"su":1},{"n":"pyroglutamine*","c":"Amino acid","g":"Amino acid","a":[-0.446,5.75],"u":[-0.203,1.56],"sa":1,"su":0},{"n":"X - 17629","c":"Unidentified","g":"Unidentified","a":[-0.13,5.56],"u":[-0.18,12.23],"sa":1,"su":1},{"n":"pro-hydroxy-pro","c":"Peptide","g":"Other","a":[-0.385,5.45],"u":[-0.345,5.92],"sa":1,"su":1},{"n":"3-hydroxyisobutyrate","c":"Amino acid","g":"Amino acid","a":[0.279,5.15],"u":[0.306,7.81],"sa":1,"su":1},{"n":"3-methoxytyrosine","c":"Amino acid","g":"Amino acid","a":[-0.225,4.83],"u":[-0.162,3.58],"sa":1,"su":1},{"n":"glycine","c":"Amino acid","g":"Amino acid","a":[-0.259,4.81],"u":[-0.328,9.31],"sa":1,"su":1},{"n":"xylose","c":"Carbohydrate","g":"Carbohydrate","a":[0.517,4.69],"u":[0.668,9.26],"sa":1,"su":1},{"n":"lactate","c":"Carbohydrate","g":"Carbohydrate","a":[0.197,4.64],"u":[0.181,5.19],"sa":1,"su":1},{"n":"gamma-glutamylglutamine","c":"Peptide","g":"Other","a":[-0.169,4.58],"u":[-0.183,6.39],"sa":1,"su":1},{"n":"2-hydroxystearate","c":"Lipid","g":"Lipid","a":[0.176,4.55],"u":[0.131,3.44],"sa":1,"su":1},{"n":"caproate (6:0)","c":"Lipid","g":"Lipid","a":[-0.191,4.23],"u":[-0.212,6.49],"sa":1,"su":1},{"n":"heptanoate (7:0)","c":"Lipid","g":"Lipid","a":[-0.223,4.17],"u":[-0.218,5.21],"sa":1,"su":1},{"n":"X - 17299","c":"Unidentified","g":"Unidentified","a":[-0.156,3.95],"u":[-0.032,0.38],"sa":1,"su":0},{"n":"alpha-ketobutyrate","c":"Amino acid","g":"Amino acid","a":[0.395,3.89],"u":[0.356,4.07],"sa":1,"su":1},{"n":"X - 13529","c":"Unidentified","g":"Unidentified","a":[0.248,3.71],"u":[0.339,8.2],"sa":1,"su":1},{"n":"X - 12230","c":"Unidentified","g":"Unidentified","a":[-0.685,3.53],"u":[-0.258,0.93],"sa":1,"su":0},{"n":"benzoate","c":"Xenobiotics","g":"Xenobiotics","a":[-0.119,3.48],"u":[-0.147,6.22],"sa":1,"su":1},{"n":"X - 19411","c":"Unidentified","g":"Unidentified","a":[-0.143,3.43],"u":[-0.201,7.71],"sa":1,"su":1},{"n":"caprylate (8:0)","c":"Lipid","g":"Lipid","a":[-0.204,3.37],"u":[-0.214,4.66],"sa":1,"su":1},{"n":"X - 13215","c":"Unidentified","g":"Unidentified","a":[-0.179,3.35],"u":[-0.223,5.73],"sa":1,"su":1},{"n":"ornithine","c":"Amino acid","g":"Amino acid","a":[-0.26,3.3],"u":[-0.174,2.18],"sa":1,"su":1},{"n":"X - 19438","c":"Unidentified","g":"Unidentified","a":[0.272,3.27],"u":[0.214,2.85],"sa":1,"su":1},{"n":"4-hydroxyphenylpyruvate","c":"Amino acid","g":"Amino acid","a":[0.339,3.04],"u":[0.356,4.13],"sa":1,"su":1},{"n":"2-ethylhexanoate","c":"Xenobiotics","g":"Xenobiotics","a":[-0.192,3.03],"u":[-0.201,4.17],"sa":1,"su":1},{"n":"3-hydroxydecanoate","c":"Lipid","g":"Lipid","a":[0.325,2.98],"u":[0.282,3.04],"sa":1,"su":1},{"n":"deoxycarnitine","c":"Lipid","g":"Lipid","a":[-0.16,2.93],"u":[-0.072,0.9],"sa":1,"su":0},{"n":"1-arachidonoylglycerophosphoinositol*","c":"Lipid","g":"Lipid","a":[0.202,2.93],"u":[0.258,5.56],"sa":1,"su":1},{"n":"lysine","c":"Amino acid","g":"Amino acid","a":[0.109,2.91],"u":[0.076,2.07],"sa":1,"su":1},{"n":"X - 18602","c":"Unidentified","g":"Unidentified","a":[0.462,2.82],"u":[0.473,3.72],"sa":1,"su":1},{"n":"3-methyl-2-oxovalerate","c":"Amino acid","g":"Amino acid","a":[0.145,2.8],"u":[0.053,0.71],"sa":1,"su":0},{"n":"X - 11423","c":"Unidentified","g":"Unidentified","a":[-0.145,2.77],"u":[-0.074,1.19],"sa":1,"su":0},{"n":"X - 02249","c":"Unidentified","g":"Unidentified","a":[-0.242,2.72],"u":[-0.121,1.16],"sa":1,"su":0},{"n":"2-aminobutyrate","c":"Amino acid","g":"Amino acid","a":[0.147,2.67],"u":[0.132,2.85],"sa":1,"su":1},{"n":"X - 12115","c":"Unidentified","g":"Unidentified","a":[-0.378,2.54],"u":[-0.163,0.86],"sa":1,"su":0},{"n":"X - 11787","c":"Unidentified","g":"Unidentified","a":[0.123,2.53],"u":[0.195,6.29],"sa":1,"su":1},{"n":"cholate","c":"Lipid","g":"Lipid","a":[-0.599,2.51],"u":[-0.476,2.22],"sa":1,"su":1},{"n":"palmitoyl sphingomyelin","c":"Lipid","g":"Lipid","a":[-0.119,2.48],"u":[-0.18,6.22],"sa":1,"su":1},{"n":"2-hydroxyhippurate (salicylurate)","c":"Xenobiotics","g":"Xenobiotics","a":[0.686,2.48],"u":[1.307,9.11],"sa":1,"su":1},{"n":"1,3-dihydroxyacetone","c":"Carbohydrate","g":"Carbohydrate","a":[0.313,2.46],"u":[0.3,2.96],"sa":1,"su":1},{"n":"cysteine","c":"Amino acid","g":"Amino acid","a":[-0.133,2.45],"u":[-0.05,0.68],"sa":1,"su":0},{"n":"xylitol","c":"Carbohydrate","g":"Carbohydrate","a":[0.283,2.44],"u":[0.376,5.04],"sa":1,"su":1},{"n":"X - 11470","c":"Unidentified","g":"Unidentified","a":[-0.298,2.29],"u":[-0.417,5.17],"sa":1,"su":1},{"n":"X - 11593","c":"Unidentified","g":"Unidentified","a":[-0.128,2.28],"u":[0.023,0.23],"sa":1,"su":0},{"n":"X - 12465","c":"Unidentified","g":"Unidentified","a":[0.314,2.26],"u":[0.516,6.18],"sa":1,"su":1},{"n":"N-acetylglycine","c":"Amino acid","g":"Amino acid","a":[-0.233,2.25],"u":[-0.199,2.11],"sa":1,"su":1},{"n":"urate","c":"Nucleotide","g":"Other","a":[-0.103,2.19],"u":[-0.082,1.85],"sa":0,"su":1},{"n":"X - 12039","c":"Unidentified","g":"Unidentified","a":[-0.649,2.18],"u":[-0.109,0.22],"sa":0,"su":0},{"n":"pelargonate (9:0)","c":"Lipid","g":"Lipid","a":[-0.119,2.17],"u":[-0.12,2.76],"sa":0,"su":1},{"n":"4-ethylphenylsulfate","c":"Xenobiotics","g":"Xenobiotics","a":[-0.458,2.13],"u":[-0.184,0.67],"sa":0,"su":0},{"n":"3-hydroxyoctanoate","c":"Lipid","g":"Lipid","a":[0.257,2.13],"u":[0.262,2.84],"sa":0,"su":1},{"n":"3-methyl catechol sulfate 1","c":"Xenobiotics","g":"Xenobiotics","a":[-0.513,2.09],"u":[0.105,0.26],"sa":0,"su":0},{"n":"X - 12855","c":"Unidentified","g":"Unidentified","a":[0.275,2.08],"u":[0.449,5.9],"sa":0,"su":1},{"n":"X - 13835","c":"Unidentified","g":"Unidentified","a":[-0.351,2.08],"u":[-0.157,0.73],"sa":0,"su":0},{"n":"X - 12729","c":"Unidentified","g":"Unidentified","a":[-0.232,2.08],"u":[-0.398,6.11],"sa":0,"su":1},{"n":"X - 17612","c":"Unidentified","g":"Unidentified","a":[0.211,2.05],"u":[0.327,5.56],"sa":0,"su":1},{"n":"pantothenate","c":"Cofactors and vitamins","g":"Other","a":[0.15,2.03],"u":[0.282,7.31],"sa":0,"su":1},{"n":"N-acetylmethionine","c":"Amino acid","g":"Amino acid","a":[-0.137,2.01],"u":[-0.038,0.39],"sa":0,"su":0},{"n":"betaine","c":"Amino acid","g":"Amino acid","a":[-0.122,1.96],"u":[-0.154,3.53],"sa":0,"su":1},{"n":"arginine","c":"Amino acid","g":"Amino acid","a":[-0.101,1.93],"u":[-0.14,4.14],"sa":0,"su":1},{"n":"X - 18739","c":"Unidentified","g":"Unidentified","a":[-0.291,1.9],"u":[-0.245,1.82],"sa":0,"su":1},{"n":"X - 13431","c":"Unidentified","g":"Unidentified","a":[-0.315,1.89],"u":[-0.135,0.67],"sa":0,"su":0},{"n":"X - 11317","c":"Unidentified","g":"Unidentified","a":[-0.146,1.88],"u":[-0.12,1.74],"sa":0,"su":0},{"n":"adenosine 5'-monophosphate (AMP)","c":"Nucleotide","g":"Other","a":[0.308,1.87],"u":[0.226,1.46],"sa":0,"su":0},{"n":"arabinose","c":"Carbohydrate","g":"Carbohydrate","a":[0.188,1.87],"u":[0.329,6.06],"sa":0,"su":1},{"n":"iminodiacetate (IDA)","c":"Xenobiotics","g":"Xenobiotics","a":[-0.088,1.85],"u":[-0.111,3.52],"sa":0,"su":1},{"n":"quinate","c":"Xenobiotics","g":"Xenobiotics","a":[-0.496,1.85],"u":[0.104,0.25],"sa":0,"su":0},{"n":"X - 07765","c":"Unidentified","g":"Unidentified","a":[-0.487,1.84],"u":[-0.436,1.99],"sa":0,"su":1},{"n":"malate","c":"Energy","g":"Other","a":[0.14,1.84],"u":[0.189,3.91],"sa":0,"su":1},{"n":"pseudouridine","c":"Nucleotide","g":"Other","a":[-0.072,1.82],"u":[0.021,0.37],"sa":0,"su":0},{"n":"2-linoleoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[-0.176,1.81],"u":[-0.24,3.52],"sa":0,"su":1},{"n":"dihydroorotate","c":"Nucleotide","g":"Other","a":[-0.222,1.81],"u":[-0.235,2.57],"sa":0,"su":1},{"n":"5-methyluridine (ribothymidine)","c":"Nucleotide","g":"Other","a":[-0.124,1.78],"u":[-0.169,3.45],"sa":0,"su":1},{"n":"caprate (10:0)","c":"Lipid","g":"Lipid","a":[-0.159,1.75],"u":[-0.184,2.7],"sa":0,"su":1},{"n":"X - 16940","c":"Unidentified","g":"Unidentified","a":[0.631,1.73],"u":[0.802,3.28],"sa":0,"su":1},{"n":"X - 13728","c":"Unidentified","g":"Unidentified","a":[-0.421,1.73],"u":[-0.308,1.32],"sa":0,"su":0},{"n":"X - 11497","c":"Unidentified","g":"Unidentified","a":[-0.186,1.72],"u":[-0.311,5.16],"sa":0,"su":1},{"n":"pyridoxate","c":"Cofactors and vitamins","g":"Other","a":[0.353,1.71],"u":[0.571,4.87],"sa":0,"su":1},{"n":"glycerol 3-phosphate (G3P)","c":"Lipid","g":"Lipid","a":[-0.135,1.7],"u":[-0.148,2.46],"sa":0,"su":1},{"n":"N-acetylthreonine","c":"Amino acid","g":"Amino acid","a":[-0.115,1.7],"u":[0.001,0.01],"sa":0,"su":0},{"n":"cysteine-glutathione disulfide","c":"Amino acid","g":"Amino acid","a":[-0.336,1.69],"u":[-0.356,2.35],"sa":0,"su":1},{"n":"N-acetylalanine","c":"Amino acid","g":"Amino acid","a":[-0.074,1.68],"u":[-0.014,0.22],"sa":0,"su":0},{"n":"X - 11529","c":"Unidentified","g":"Unidentified","a":[0.319,1.66],"u":[0.294,1.79],"sa":0,"su":0},{"n":"isovalerate","c":"Lipid","g":"Lipid","a":[0.162,1.64],"u":[0.14,1.66],"sa":0,"su":0},{"n":"myristoleate (14:1n5)","c":"Lipid","g":"Lipid","a":[-0.301,1.54],"u":[-0.438,3.19],"sa":0,"su":1},{"n":"4-methyl-2-oxopentanoate","c":"Amino acid","g":"Amino acid","a":[0.109,1.53],"u":[0.027,0.26],"sa":0,"su":0},{"n":"X - 11522","c":"Unidentified","g":"Unidentified","a":[-0.214,1.52],"u":[-0.116,0.69],"sa":0,"su":0},{"n":"glycoursodeoxycholate","c":"Lipid","g":"Lipid","a":[-0.409,1.5],"u":[-0.537,2.99],"sa":0,"su":1},{"n":"kynurenine","c":"Amino acid","g":"Amino acid","a":[-0.092,1.49],"u":[0.022,0.25],"sa":0,"su":0},{"n":"kynurenate","c":"Amino acid","g":"Amino acid","a":[-0.146,1.48],"u":[-0.103,1.06],"sa":0,"su":0},{"n":"X - 16935","c":"Unidentified","g":"Unidentified","a":[0.256,1.47],"u":[-0.038,0.14],"sa":0,"su":0},{"n":"docosahexaenoate (DHA; 22:6n3)","c":"Lipid","g":"Lipid","a":[0.222,1.47],"u":[0.118,0.72],"sa":0,"su":0},{"n":"X - 15222","c":"Unidentified","g":"Unidentified","a":[-0.125,1.46],"u":[-0.132,2.01],"sa":0,"su":1},{"n":"cyclo(leu-pro)","c":"Peptide","g":"Other","a":[-0.233,1.46],"u":[-0.133,0.75],"sa":0,"su":0},{"n":"3-methylhistidine","c":"Amino acid","g":"Amino acid","a":[-0.372,1.46],"u":[-0.224,0.86],"sa":0,"su":0},{"n":"N-methyl proline","c":"Amino acid","g":"Amino acid","a":[0.414,1.45],"u":[0.671,4.08],"sa":0,"su":1},{"n":"X - 12442","c":"Unidentified","g":"Unidentified","a":[-0.25,1.44],"u":[-0.36,3.23],"sa":0,"su":1},{"n":"X - 17653","c":"Unidentified","g":"Unidentified","a":[0.162,1.44],"u":[0.108,0.95],"sa":0,"su":0},{"n":"X - 11849","c":"Unidentified","g":"Unidentified","a":[-0.456,1.43],"u":[-0.138,0.33],"sa":0,"su":0},{"n":"glutamate","c":"Amino acid","g":"Amino acid","a":[0.134,1.42],"u":[0.269,5.28],"sa":0,"su":1},{"n":"X - 16578","c":"Unidentified","g":"Unidentified","a":[-0.183,1.4],"u":[-0.138,1.15],"sa":0,"su":0},{"n":"C-glycosyltryptophan*","c":"Amino acid","g":"Amino acid","a":[-0.073,1.38],"u":[0.064,1.2],"sa":0,"su":0},{"n":"decanoylcarnitine","c":"Lipid","g":"Lipid","a":[-0.219,1.38],"u":[-0.251,2.17],"sa":0,"su":1},{"n":"serine","c":"Amino acid","g":"Amino acid","a":[-0.095,1.37],"u":[-0.181,4.84],"sa":0,"su":1},{"n":"X - 12847","c":"Unidentified","g":"Unidentified","a":[-0.371,1.36],"u":[-0.052,0.13],"sa":0,"su":0},{"n":"HWESASXX*","c":"Peptide","g":"Other","a":[0.258,1.36],"u":[0.102,0.43],"sa":0,"su":0},{"n":"hexanoylcarnitine","c":"Lipid","g":"Lipid","a":[-0.129,1.36],"u":[-0.104,1.19],"sa":0,"su":0},{"n":"eicosapentaenoate (EPA; 20:5n3)","c":"Lipid","g":"Lipid","a":[0.218,1.36],"u":[0.181,1.29],"sa":0,"su":0},{"n":"N6-carbamoylthreonyladenosine","c":"Nucleotide","g":"Other","a":[-0.098,1.36],"u":[0.009,0.08],"sa":0,"su":0},{"n":"X - 11858","c":"Unidentified","g":"Unidentified","a":[-0.596,1.35],"u":[-0.246,0.47],"sa":0,"su":0},{"n":"erythrulose","c":"Secondary Metabolism","g":"Other","a":[0.177,1.34],"u":[0.163,1.41],"sa":0,"su":0},{"n":"acetylcarnitine","c":"Lipid","g":"Lipid","a":[-0.098,1.34],"u":[-0.016,0.15],"sa":0,"su":0},{"n":"2-hydroxydecanoic acid","c":"Lipid","g":"Lipid","a":[-0.193,1.34],"u":[-0.238,2.32],"sa":0,"su":1},{"n":"4-hydroxyphenylacetate","c":"Amino acid","g":"Amino acid","a":[0.224,1.32],"u":[0.342,3.34],"sa":0,"su":1},{"n":"X - 17357","c":"Unidentified","g":"Unidentified","a":[0.156,1.31],"u":[0.153,1.62],"sa":0,"su":0},{"n":"glycodeoxycholate","c":"Lipid","g":"Lipid","a":[0.399,1.31],"u":[0.39,1.62],"sa":0,"su":0},{"n":"X - 13435","c":"Unidentified","g":"Unidentified","a":[-0.204,1.31],"u":[-0.118,0.74],"sa":0,"su":0},{"n":"X - 12101","c":"Unidentified","g":"Unidentified","a":[0.222,1.31],"u":[0.31,2.83],"sa":0,"su":1},{"n":"3-hydroxypropanoate","c":"Lipid","g":"Lipid","a":[0.133,1.3],"u":[0.129,1.6],"sa":0,"su":0},{"n":"5-dodecenoate (12:1n7)","c":"Lipid","g":"Lipid","a":[-0.236,1.29],"u":[-0.442,4.17],"sa":0,"su":1},{"n":"3-methyl-2-oxobutyrate","c":"Amino acid","g":"Amino acid","a":[0.075,1.28],"u":[0.017,0.21],"sa":0,"su":0},{"n":"1-linoleoylglycerophosphocholine","c":"Lipid","g":"Lipid","a":[-0.113,1.27],"u":[-0.179,3.07],"sa":0,"su":1},{"n":"2-docosahexaenoylglycerophosphoethanolamine*","c":"Lipid","g":"Lipid","a":[0.201,1.27],"u":[0.111,0.66],"sa":0,"su":0},{"n":"X - 12063","c":"Unidentified","g":"Unidentified","a":[0.237,1.26],"u":[0.304,2.27],"sa":0,"su":1},{"n":"cis-vaccenate (18:1n7)","c":"Lipid","g":"Lipid","a":[-0.15,1.25],"u":[-0.214,2.64],"sa":0,"su":1},{"n":"1-linoleoylglycerophosphoethanolamine*","c":"Lipid","g":"Lipid","a":[-0.169,1.25],"u":[-0.106,0.79],"sa":0,"su":0},{"n":"X - 17337","c":"Unidentified","g":"Unidentified","a":[-0.181,1.24],"u":[-0.067,0.38],"sa":0,"su":0},{"n":"cholesterol","c":"Lipid","g":"Lipid","a":[-0.063,1.23],"u":[-0.094,2.85],"sa":0,"su":1},{"n":"isoleucine","c":"Amino acid","g":"Amino acid","a":[0.064,1.23],"u":[0.035,0.64],"sa":0,"su":0},{"n":"X - 11530","c":"Unidentified","g":"Unidentified","a":[-0.187,1.2],"u":[-0.088,0.47],"sa":0,"su":0},{"n":"X - 11564","c":"Unidentified","g":"Unidentified","a":[-0.066,1.2],"u":[0.113,2.89],"sa":0,"su":1},{"n":"octanoylcarnitine","c":"Lipid","g":"Lipid","a":[-0.179,1.19],"u":[-0.191,1.65],"sa":0,"su":0},{"n":"X - 16063","c":"Unidentified","g":"Unidentified","a":[-0.114,1.18],"u":[-0.112,1.47],"sa":0,"su":0},{"n":"4-androsten-3beta,17beta-diol disulfate 1*","c":"Lipid","g":"Lipid","a":[0.249,1.18],"u":[0.073,0.26],"sa":0,"su":0},{"n":"X - 15650","c":"Unidentified","g":"Unidentified","a":[-0.094,1.17],"u":[-0.093,1.44],"sa":0,"su":0},{"n":"X - 16869","c":"Unidentified","g":"Unidentified","a":[-0.141,1.16],"u":[-0.073,0.57],"sa":0,"su":0},{"n":"X - 16943","c":"Unidentified","g":"Unidentified","a":[-0.092,1.14],"u":[-0.134,2.64],"sa":0,"su":1},{"n":"X - 11204","c":"Unidentified","g":"Unidentified","a":[-0.088,1.14],"u":[-0.121,2.39],"sa":0,"su":1},{"n":"1-palmitoylglycerophosphoinositol*","c":"Lipid","g":"Lipid","a":[0.176,1.13],"u":[0.141,1.02],"sa":0,"su":0},{"n":"trans-4-hydroxyproline","c":"Amino acid","g":"Amino acid","a":[-0.12,1.12],"u":[-0.134,1.67],"sa":0,"su":0},{"n":"X - 17690","c":"Unidentified","g":"Unidentified","a":[-0.412,1.11],"u":[-0.059,0.11],"sa":0,"su":0},{"n":"X - 11561","c":"Unidentified","g":"Unidentified","a":[-0.12,1.09],"u":[-0.105,0.83],"sa":0,"su":0},{"n":"X - 13483","c":"Unidentified","g":"Unidentified","a":[-0.13,1.09],"u":[-0.212,2.99],"sa":0,"su":1},{"n":"valine","c":"Amino acid","g":"Amino acid","a":[0.046,1.08],"u":[0.039,1.06],"sa":0,"su":0},{"n":"X - 17269","c":"Unidentified","g":"Unidentified","a":[-0.113,1.08],"u":[-0.149,2.1],"sa":0,"su":1},{"n":"X - 19147","c":"Unidentified","g":"Unidentified","a":[-0.184,1.07],"u":[-0.118,0.7],"sa":0,"su":0},{"n":"1-oleoylglycerophosphocholine","c":"Lipid","g":"Lipid","a":[-0.104,1.04],"u":[-0.152,2.23],"sa":0,"su":1},{"n":"X - 12846","c":"Unidentified","g":"Unidentified","a":[0.175,1.03],"u":[0.279,2.61],"sa":0,"su":1},{"n":"theobromine","c":"Xenobiotics","g":"Xenobiotics","a":[-0.208,1.02],"u":[-0.143,0.7],"sa":0,"su":0},{"n":"X - 15728","c":"Unidentified","g":"Unidentified","a":[-0.341,1.01],"u":[0.104,0.25],"sa":0,"su":0},{"n":"myo-inositol","c":"Lipid","g":"Lipid","a":[0.08,1.01],"u":[0.274,8.45],"sa":0,"su":1},{"n":"X - 13727","c":"Unidentified","g":"Unidentified","a":[0.21,1.01],"u":[0.325,2.47],"sa":0,"su":1},{"n":"X - 15636","c":"Unidentified","g":"Unidentified","a":[0.402,1.0],"u":[0.52,1.86],"sa":0,"su":1},{"n":"pregnen-diol disulfate*","c":"Lipid","g":"Lipid","a":[0.203,1.0],"u":[-0.15,0.7],"sa":0,"su":0},{"n":"hippurate","c":"Xenobiotics","g":"Xenobiotics","a":[-0.238,0.98],"u":[0.115,0.42],"sa":0,"su":0},{"n":"X - 14939","c":"Unidentified","g":"Unidentified","a":[0.173,0.98],"u":[0.069,0.35],"sa":0,"su":0},{"n":"glycerol 2-phosphate","c":"Xenobiotics","g":"Xenobiotics","a":[-0.121,0.97],"u":[-0.16,1.89],"sa":0,"su":1},{"n":"leucine","c":"Amino acid","g":"Amino acid","a":[0.051,0.97],"u":[0.04,0.84],"sa":0,"su":0},{"n":"X - 11847","c":"Unidentified","g":"Unidentified","a":[-0.431,0.97],"u":[-0.075,0.13],"sa":0,"su":0},{"n":"beta-hydroxyisovalerate","c":"Amino acid","g":"Amino acid","a":[0.089,0.97],"u":[0.104,1.56],"sa":0,"su":0},{"n":"2-linoleoylglycerophosphoethanolamine*","c":"Lipid","g":"Lipid","a":[-0.109,0.96],"u":[-0.083,0.82],"sa":0,"su":0},{"n":"homocitrulline","c":"Amino acid","g":"Amino acid","a":[-0.227,0.95],"u":[0.157,0.67],"sa":0,"su":0},{"n":"homostachydrine*","c":"Xenobiotics","g":"Xenobiotics","a":[0.233,0.95],"u":[0.28,1.57],"sa":0,"su":0},{"n":"X - 11400","c":"Unidentified","g":"Unidentified","a":[0.325,0.94],"u":[0.088,0.2],"sa":0,"su":0},{"n":"4-androsten-3beta,17beta-diol disulfate 2*","c":"Lipid","g":"Lipid","a":[0.166,0.93],"u":[-0.112,0.59],"sa":0,"su":0},{"n":"N1-Methyl-2-pyridone-5-carboxamide","c":"Cofactors and vitamins","g":"Other","a":[0.203,0.93],"u":[0.288,2.03],"sa":0,"su":1},{"n":"X - 12740","c":"Unidentified","g":"Unidentified","a":[0.365,0.93],"u":[0.29,0.83],"sa":0,"su":0},{"n":"X - 13658","c":"Unidentified","g":"Unidentified","a":[0.492,0.92],"u":[0.424,0.89],"sa":0,"su":0},{"n":"3-methylglutarylcarnitine (C6)","c":"Amino acid","g":"Amino acid","a":[-0.252,0.89],"u":[0.079,0.23],"sa":0,"su":0},{"n":"andro steroid monosulfate 2*","c":"Lipid","g":"Lipid","a":[0.233,0.88],"u":[-0.15,0.56],"sa":0,"su":0},{"n":"carnitine","c":"Lipid","g":"Lipid","a":[-0.061,0.88],"u":[-0.088,1.87],"sa":0,"su":1},{"n":"N-formylmethionine","c":"Amino acid","g":"Amino acid","a":[-0.056,0.87],"u":[0.019,0.24],"sa":0,"su":0},{"n":"10-heptadecenoate (17:1n7)","c":"Lipid","g":"Lipid","a":[-0.17,0.87],"u":[-0.138,0.73],"sa":0,"su":0},{"n":"15-methylpalmitate (isobar with 2-methylpalmitate)","c":"Lipid","g":"Lipid","a":[-0.142,0.87],"u":[-0.11,0.69],"sa":0,"su":0},{"n":"X - 17656","c":"Unidentified","g":"Unidentified","a":[-0.46,0.86],"u":[-0.064,0.09],"sa":0,"su":0},{"n":"X - 17628","c":"Unidentified","g":"Unidentified","a":[-0.053,0.85],"u":[-0.111,3.35],"sa":0,"su":1},{"n":"X - 13871","c":"Unidentified","g":"Unidentified","a":[0.1,0.84],"u":[0.076,0.71],"sa":0,"su":0},{"n":"X - 13429","c":"Unidentified","g":"Unidentified","a":[0.278,0.82],"u":[0.167,0.51],"sa":0,"su":0},{"n":"histidine","c":"Amino acid","g":"Amino acid","a":[-0.052,0.82],"u":[-0.125,3.98],"sa":0,"su":1},{"n":"2-hydroxypalmitate","c":"Lipid","g":"Lipid","a":[0.054,0.81],"u":[0.043,0.7],"sa":0,"su":0},{"n":"X - 12844","c":"Unidentified","g":"Unidentified","a":[0.154,0.81],"u":[0.063,0.31],"sa":0,"su":0},{"n":"X - 11550","c":"Unidentified","g":"Unidentified","a":[-0.058,0.81],"u":[-0.078,1.55],"sa":0,"su":0},{"n":"glutamine","c":"Amino acid","g":"Amino acid","a":[-0.045,0.8],"u":[-0.075,2.21],"sa":0,"su":1},{"n":"X - 12459","c":"Unidentified","g":"Unidentified","a":[-0.174,0.8],"u":[0.043,0.16],"sa":0,"su":0},{"n":"proline","c":"Amino acid","g":"Amino acid","a":[0.065,0.79],"u":[0.067,1.05],"sa":0,"su":0},{"n":"1-stearoylglycerophosphoinositol","c":"Lipid","g":"Lipid","a":[0.111,0.79],"u":[0.162,1.76],"sa":0,"su":0},{"n":"palmitoleate (16:1n7)","c":"Lipid","g":"Lipid","a":[-0.172,0.79],"u":[-0.249,1.49],"sa":0,"su":0},{"n":"2-myristoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[0.144,0.79],"u":[0.052,0.25],"sa":0,"su":0},{"n":"phenylalanyltryptophan","c":"Peptide","g":"Other","a":[-0.096,0.78],"u":[-0.189,2.74],"sa":0,"su":1},{"n":"X - 12038","c":"Unidentified","g":"Unidentified","a":[-0.129,0.78],"u":[-0.033,0.17],"sa":0,"su":0},{"n":"taurolithocholate 3-sulfate","c":"Lipid","g":"Lipid","a":[0.283,0.78],"u":[0.306,1.1],"sa":0,"su":0},{"n":"docosapentaenoate (n3 DPA; 22:5n3)","c":"Lipid","g":"Lipid","a":[0.147,0.77],"u":[0.09,0.49],"sa":0,"su":0},{"n":"X - 11440","c":"Unidentified","g":"Unidentified","a":[0.163,0.77],"u":[-0.103,0.46],"sa":0,"su":0},{"n":"X - 11381","c":"Unidentified","g":"Unidentified","a":[-0.08,0.76],"u":[0.025,0.19],"sa":0,"su":0},{"n":"creatine","c":"Amino acid","g":"Amino acid","a":[0.107,0.74],"u":[-0.037,0.21],"sa":0,"su":0},{"n":"alpha-ketoglutarate","c":"Energy","g":"Other","a":[0.112,0.73],"u":[0.142,1.3],"sa":0,"su":0},{"n":"phenylacetylglutamine","c":"Amino acid","g":"Amino acid","a":[0.189,0.73],"u":[0.402,2.86],"sa":0,"su":1},{"n":"beta-sitosterol","c":"Lipid","g":"Lipid","a":[0.169,0.72],"u":[0.153,0.78],"sa":0,"su":0},{"n":"dimethylglycine","c":"Amino acid","g":"Amino acid","a":[-0.073,0.72],"u":[0.044,0.41],"sa":0,"su":0},{"n":"1-oleoylglycerol (1-monoolein)","c":"Lipid","g":"Lipid","a":[0.14,0.72],"u":[0.162,1.1],"sa":0,"su":0},{"n":"uridine","c":"Nucleotide","g":"Other","a":[-0.053,0.71],"u":[-0.12,3.1],"sa":0,"su":1},{"n":"5alpha-androstan-3beta,17beta-diol disulfate","c":"Lipid","g":"Lipid","a":[0.167,0.7],"u":[0.257,1.23],"sa":0,"su":0},{"n":"X - 11818","c":"Unidentified","g":"Unidentified","a":[0.09,0.69],"u":[0.166,2.18],"sa":0,"su":1},{"n":"phenylalanine","c":"Amino acid","g":"Amino acid","a":[0.034,0.68],"u":[0.017,0.33],"sa":0,"su":0},{"n":"phenyllactate (PLA)","c":"Amino acid","g":"Amino acid","a":[0.102,0.68],"u":[0.152,1.39],"sa":0,"su":0},{"n":"X - 12029","c":"Unidentified","g":"Unidentified","a":[-0.06,0.68],"u":[-0.105,1.86],"sa":0,"su":1},{"n":"cis-4-decenoyl carnitine","c":"Lipid","g":"Lipid","a":[-0.161,0.67],"u":[-0.139,0.68],"sa":0,"su":0},{"n":"X - 16206","c":"Unidentified","g":"Unidentified","a":[-0.036,0.66],"u":[-0.079,2.5],"sa":0,"su":1},{"n":"arachidonate (20:4n6)","c":"Lipid","g":"Lipid","a":[0.072,0.66],"u":[0.056,0.58],"sa":0,"su":0},{"n":"X - 11845","c":"Unidentified","g":"Unidentified","a":[-0.264,0.66],"u":[0.132,0.31],"sa":0,"su":0},{"n":"lathosterol","c":"Lipid","g":"Lipid","a":[-0.152,0.65],"u":[-0.292,2.16],"sa":0,"su":1},{"n":"tiglyl carnitine","c":"Amino acid","g":"Amino acid","a":[0.133,0.65],"u":[0.259,2.19],"sa":0,"su":1},{"n":"1-palmitoylglycerol (1-monopalmitin)","c":"Lipid","g":"Lipid","a":[0.057,0.65],"u":[0.045,0.56],"sa":0,"su":0},{"n":"bilirubin (Z,Z)","c":"Cofactors and vitamins","g":"Other","a":[-0.123,0.65],"u":[-0.131,0.87],"sa":0,"su":0},{"n":"alanine","c":"Amino acid","g":"Amino acid","a":[0.047,0.65],"u":[0.036,0.57],"sa":0,"su":0},{"n":"2-docosapentaenoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[-0.101,0.64],"u":[-0.124,1.01],"sa":0,"su":0},{"n":"glycerophosphorylcholine (GPC)","c":"Lipid","g":"Lipid","a":[-0.079,0.64],"u":[-0.196,3.21],"sa":0,"su":1},{"n":"N-acetyl-beta-alanine","c":"Amino acid","g":"Amino acid","a":[0.075,0.64],"u":[0.038,0.33],"sa":0,"su":0},{"n":"X - 11485","c":"Unidentified","g":"Unidentified","a":[0.203,0.64],"u":[0.014,0.04],"sa":0,"su":0},{"n":"X - 17654","c":"Unidentified","g":"Unidentified","a":[0.107,0.64],"u":[0.097,0.68],"sa":0,"su":0},{"n":"X - 11521","c":"Unidentified","g":"Unidentified","a":[-0.111,0.64],"u":[-0.12,0.87],"sa":0,"su":0},{"n":"catechol sulfate","c":"Xenobiotics","g":"Xenobiotics","a":[-0.105,0.63],"u":[0.114,0.83],"sa":0,"su":0},{"n":"biliverdin","c":"Cofactors and vitamins","g":"Other","a":[-0.103,0.62],"u":[-0.035,0.18],"sa":0,"su":0},{"n":"1,7-dimethylurate","c":"Xenobiotics","g":"Xenobiotics","a":[0.13,0.62],"u":[0.394,4.17],"sa":0,"su":1},{"n":"5-oxoproline","c":"Amino acid","g":"Amino acid","a":[-0.054,0.62],"u":[-0.083,1.46],"sa":0,"su":0},{"n":"X - 12644","c":"Unidentified","g":"Unidentified","a":[0.095,0.62],"u":[0.154,1.55],"sa":0,"su":0},{"n":"X - 12776","c":"Unidentified","g":"Unidentified","a":[-0.034,0.61],"u":[-0.08,2.67],"sa":0,"su":1},{"n":"X - 12107","c":"Unidentified","g":"Unidentified","a":[0.142,0.6],"u":[0.254,1.74],"sa":0,"su":0},{"n":"alpha-hydroxyisocaproate","c":"Amino acid","g":"Amino acid","a":[0.091,0.6],"u":[0.005,0.02],"sa":0,"su":0},{"n":"X - 14056","c":"Unidentified","g":"Unidentified","a":[0.079,0.6],"u":[0.082,0.78],"sa":0,"su":0},{"n":"pregnanediol-3-glucuronide","c":"Lipid","g":"Lipid","a":[0.194,0.59],"u":[-0.375,1.77],"sa":0,"su":0},{"n":"X - 17336","c":"Unidentified","g":"Unidentified","a":[0.113,0.59],"u":[0.039,0.19],"sa":0,"su":0},{"n":"X - 11308","c":"Unidentified","g":"Unidentified","a":[0.085,0.58],"u":[-0.018,0.1],"sa":0,"su":0},{"n":"X - 11442","c":"Unidentified","g":"Unidentified","a":[-0.11,0.58],"u":[-0.032,0.14],"sa":0,"su":0},{"n":"X - 11491","c":"Unidentified","g":"Unidentified","a":[-0.193,0.57],"u":[0.15,0.49],"sa":0,"su":0},{"n":"oleoylcarnitine","c":"Lipid","g":"Lipid","a":[-0.098,0.57],"u":[-0.089,0.62],"sa":0,"su":0},{"n":"X - 11342","c":"Unidentified","g":"Unidentified","a":[0.128,0.57],"u":[0.158,0.96],"sa":0,"su":0},{"n":"X - 18914","c":"Unidentified","g":"Unidentified","a":[0.1,0.57],"u":[0.15,1.27],"sa":0,"su":0},{"n":"serotonin (5HT)","c":"Amino acid","g":"Amino acid","a":[0.136,0.57],"u":[0.017,0.06],"sa":0,"su":0},{"n":"beta-alanine","c":"Amino acid","g":"Amino acid","a":[-0.082,0.55],"u":[-0.13,1.25],"sa":0,"su":0},{"n":"2-stearoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[-0.13,0.55],"u":[-0.256,1.8],"sa":0,"su":0},{"n":"2-hydroxy-3-methylvalerate","c":"Amino acid","g":"Amino acid","a":[0.096,0.55],"u":[0.059,0.33],"sa":0,"su":0},{"n":"17-methylstearate","c":"Lipid","g":"Lipid","a":[-0.134,0.55],"u":[-0.116,0.54],"sa":0,"su":0},{"n":"isobutyrylcarnitine","c":"Amino acid","g":"Amino acid","a":[-0.086,0.54],"u":[0.1,0.79],"sa":0,"su":0},{"n":"3-hydroxybutyrate (BHBA)","c":"Lipid","g":"Lipid","a":[0.14,0.54],"u":[0.15,0.71],"sa":0,"su":0},{"n":"X - 13866","c":"Unidentified","g":"Unidentified","a":[0.146,0.54],"u":[0.44,3.48],"sa":0,"su":1},{"n":"1-arachidonoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[-0.08,0.53],"u":[-0.064,0.48],"sa":0,"su":0},{"n":"X - 11549","c":"Unidentified","g":"Unidentified","a":[-0.117,0.53],"u":[-0.236,1.77],"sa":0,"su":0},{"n":"7-methylxanthine","c":"Xenobiotics","g":"Xenobiotics","a":[-0.123,0.53],"u":[-0.146,0.82],"sa":0,"su":0},{"n":"10-nonadecenoate (19:1n9)","c":"Lipid","g":"Lipid","a":[-0.119,0.53],"u":[-0.1,0.47],"sa":0,"su":0},{"n":"X - 15484","c":"Unidentified","g":"Unidentified","a":[0.056,0.53],"u":[0.078,1.06],"sa":0,"su":0},{"n":"1,2-dipalmitoylglycerol","c":"Lipid","g":"Lipid","a":[0.132,0.52],"u":[0.147,0.74],"sa":0,"su":0},{"n":"X - 12092","c":"Unidentified","g":"Unidentified","a":[0.107,0.52],"u":[0.3,3.01],"sa":0,"su":1},{"n":"X - 16934","c":"Unidentified","g":"Unidentified","a":[-0.102,0.51],"u":[-0.041,0.18],"sa":0,"su":0},{"n":"X - 15375","c":"Unidentified","g":"Unidentified","a":[0.051,0.51],"u":[-0.033,0.36],"sa":0,"su":0},{"n":"1-palmitoleoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[-0.086,0.51],"u":[-0.13,1.14],"sa":0,"su":0},{"n":"hexadecanedioate","c":"Lipid","g":"Lipid","a":[0.089,0.51],"u":[0.077,0.52],"sa":0,"su":0},{"n":"docosapentaenoate (n6 DPA; 22:5n6)","c":"Lipid","g":"Lipid","a":[0.089,0.51],"u":[-0.039,0.21],"sa":0,"su":0},{"n":"X - 11334","c":"Unidentified","g":"Unidentified","a":[0.076,0.51],"u":[0.334,5.87],"sa":0,"su":1},{"n":"X - 11876","c":"Unidentified","g":"Unidentified","a":[0.101,0.51],"u":[0.194,1.58],"sa":0,"su":0},{"n":"X - 13891","c":"Unidentified","g":"Unidentified","a":[-0.085,0.5],"u":[-0.034,0.19],"sa":0,"su":0},{"n":"X - 17682","c":"Unidentified","g":"Unidentified","a":[-0.054,0.5],"u":[0.051,0.55],"sa":0,"su":0},{"n":"linoleate (18:2n6)","c":"Lipid","g":"Lipid","a":[-0.08,0.49],"u":[-0.121,1.03],"sa":0,"su":0},{"n":"X - 16975","c":"Unidentified","g":"Unidentified","a":[-0.114,0.49],"u":[0.057,0.24],"sa":0,"su":0},{"n":"X - 11478","c":"Unidentified","g":"Unidentified","a":[0.118,0.48],"u":[-0.037,0.14],"sa":0,"su":0},{"n":"androsterone sulfate","c":"Lipid","g":"Lipid","a":[-0.128,0.48],"u":[-0.475,3.66],"sa":0,"su":1},{"n":"X - 15382","c":"Unidentified","g":"Unidentified","a":[0.053,0.48],"u":[0.076,0.96],"sa":0,"su":0},{"n":"X - 17185","c":"Unidentified","g":"Unidentified","a":[-0.17,0.48],"u":[0.17,0.56],"sa":0,"su":0},{"n":"X - 09789","c":"Unidentified","g":"Unidentified","a":[0.103,0.47],"u":[0.383,4.15],"sa":0,"su":1},{"n":"1-arachidonoylglycerophosphoethanolamine*","c":"Lipid","g":"Lipid","a":[-0.07,0.47],"u":[0.017,0.1],"sa":0,"su":0},{"n":"X - 17254","c":"Unidentified","g":"Unidentified","a":[-0.321,0.47],"u":[-0.253,0.42],"sa":0,"su":0},{"n":"X - 14588","c":"Unidentified","g":"Unidentified","a":[-0.022,0.47],"u":[-0.077,3.11],"sa":0,"su":1},{"n":"X - 11687","c":"Unidentified","g":"Unidentified","a":[-0.047,0.46],"u":[0.07,0.97],"sa":0,"su":0},{"n":"N2,N2-dimethylguanosine","c":"Nucleotide","g":"Other","a":[-0.059,0.46],"u":[0.052,0.47],"sa":0,"su":0},{"n":"X - 11437","c":"Unidentified","g":"Unidentified","a":[-0.265,0.46],"u":[-0.333,0.72],"sa":0,"su":0},{"n":"cortisone","c":"Lipid","g":"Lipid","a":[-0.065,0.46],"u":[-0.177,2.48],"sa":0,"su":1},{"n":"X - 11795","c":"Unidentified","g":"Unidentified","a":[-0.068,0.46],"u":[0.011,0.06],"sa":0,"su":0},{"n":"asparagine","c":"Amino acid","g":"Amino acid","a":[0.042,0.46],"u":[-0.029,0.33],"sa":0,"su":0},{"n":"13-HODE + 9-HODE","c":"Lipid","g":"Lipid","a":[0.072,0.45],"u":[0.024,0.14],"sa":0,"su":0},{"n":"X - 12119","c":"Unidentified","g":"Unidentified","a":[0.127,0.45],"u":[0.233,1.24],"sa":0,"su":0},{"n":"piperine","c":"Xenobiotics","g":"Xenobiotics","a":[-0.19,0.45],"u":[-0.255,0.84],"sa":0,"su":0},{"n":"indolelactate","c":"Amino acid","g":"Amino acid","a":[-0.047,0.44],"u":[0.038,0.38],"sa":0,"su":0},{"n":"X - 11261","c":"Unidentified","g":"Unidentified","a":[-0.095,0.44],"u":[-0.044,0.2],"sa":0,"su":0},{"n":"X - 11327","c":"Unidentified","g":"Unidentified","a":[-0.053,0.44],"u":[-0.103,1.38],"sa":0,"su":0},{"n":"cys-gly, oxidized","c":"Peptide","g":"Other","a":[0.056,0.44],"u":[-0.069,0.66],"sa":0,"su":0},{"n":"X - 15503","c":"Unidentified","g":"Unidentified","a":[-0.06,0.43],"u":[0.142,1.71],"sa":0,"su":0},{"n":"X - 18601","c":"Unidentified","g":"Unidentified","a":[0.121,0.43],"u":[-0.376,2.48],"sa":0,"su":1},{"n":"indolepropionate","c":"Amino acid","g":"Amino acid","a":[-0.143,0.42],"u":[-0.162,0.62],"sa":0,"su":0},{"n":"alpha-hydroxyisovalerate","c":"Amino acid","g":"Amino acid","a":[0.068,0.42],"u":[0.027,0.16],"sa":0,"su":0},{"n":"palmitoylcarnitine","c":"Lipid","g":"Lipid","a":[0.07,0.42],"u":[0.045,0.28],"sa":0,"su":0},{"n":"erythritol","c":"Xenobiotics","g":"Xenobiotics","a":[0.052,0.41],"u":[0.213,4.05],"sa":0,"su":1},{"n":"X - 11438","c":"Unidentified","g":"Unidentified","a":[-0.094,0.41],"u":[0.028,0.11],"sa":0,"su":0},{"n":"glycolithocholate sulfate*","c":"Lipid","g":"Lipid","a":[0.19,0.4],"u":[0.298,0.93],"sa":0,"su":0},{"n":"taurocholate","c":"Lipid","g":"Lipid","a":[0.184,0.4],"u":[0.142,0.35],"sa":0,"su":0},{"n":"isovalerylcarnitine","c":"Amino acid","g":"Amino acid","a":[0.058,0.39],"u":[0.162,1.99],"sa":0,"su":1},{"n":"X - 11820","c":"Unidentified","g":"Unidentified","a":[-0.07,0.39],"u":[-0.076,0.52],"sa":0,"su":0},{"n":"2-oleoylglycerophosphoethanolamine*","c":"Lipid","g":"Lipid","a":[-0.128,0.39],"u":[-0.057,0.18],"sa":0,"su":0},{"n":"methyl-4-hydroxybenzoate","c":"Xenobiotics","g":"Xenobiotics","a":[-0.082,0.39],"u":[-0.054,0.28],"sa":0,"su":0},{"n":"X - 18249","c":"Unidentified","g":"Unidentified","a":[0.071,0.39],"u":[0.05,0.3],"sa":0,"su":0},{"n":"1-eicosadienoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[-0.068,0.38],"u":[-0.135,1.16],"sa":0,"su":0},{"n":"X - 11538","c":"Unidentified","g":"Unidentified","a":[0.077,0.38],"u":[0.109,0.73],"sa":0,"su":0},{"n":"3-phosphoglycerate","c":"Carbohydrate","g":"Carbohydrate","a":[0.074,0.37],"u":[0.039,0.2],"sa":0,"su":0},{"n":"succinate","c":"Energy","g":"Other","a":[0.033,0.37],"u":[0.029,0.38],"sa":0,"su":0},{"n":"creatinine","c":"Amino acid","g":"Amino acid","a":[-0.023,0.37],"u":[-0.034,0.69],"sa":0,"su":0},{"n":"bilirubin (E,E)*","c":"Cofactors and vitamins","g":"Other","a":[0.09,0.37],"u":[0.076,0.34],"sa":0,"su":0},{"n":"X - 17148","c":"Unidentified","g":"Unidentified","a":[0.095,0.36],"u":[0.195,0.92],"sa":0,"su":0},{"n":"oleate (18:1n9)","c":"Lipid","g":"Lipid","a":[-0.069,0.36],"u":[-0.132,1.0],"sa":0,"su":0},{"n":"dihomo-linolenate (20:3n3 or n6)","c":"Lipid","g":"Lipid","a":[0.053,0.36],"u":[0.035,0.25],"sa":0,"su":0},{"n":"7-alpha-hydroxy-3-oxo-4-cholestenoate (7-Hoca)","c":"Lipid","g":"Lipid","a":[-0.04,0.36],"u":[0.0,0.0],"sa":0,"su":0},{"n":"X - 12411","c":"Unidentified","g":"Unidentified","a":[-0.061,0.35],"u":[0.218,2.38],"sa":0,"su":1},{"n":"beta-tocopherol","c":"Cofactors and vitamins","g":"Other","a":[-0.077,0.35],"u":[-0.001,0.0],"sa":0,"su":0},{"n":"nonadecanoate (19:0)","c":"Lipid","g":"Lipid","a":[0.053,0.33],"u":[-0.008,0.04],"sa":0,"su":0},{"n":"octadecanedioate","c":"Lipid","g":"Lipid","a":[0.071,0.33],"u":[-0.009,0.04],"sa":0,"su":0},{"n":"3-(4-hydroxyphenyl)lactate","c":"Amino acid","g":"Amino acid","a":[-0.04,0.33],"u":[0.023,0.19],"sa":0,"su":0},{"n":"1,2-propanediol","c":"Lipid","g":"Lipid","a":[-0.12,0.33],"u":[-0.104,0.33],"sa":0,"su":0},{"n":"urea","c":"Amino acid","g":"Amino acid","a":[-0.036,0.33],"u":[0.136,2.47],"sa":0,"su":1},{"n":"linolenate [alpha or gamma; (18:3n3 or 6)]","c":"Lipid","g":"Lipid","a":[-0.073,0.32],"u":[-0.106,0.61],"sa":0,"su":0},{"n":"1-stearoylglycerophosphocholine","c":"Lipid","g":"Lipid","a":[-0.096,0.32],"u":[-0.191,0.98],"sa":0,"su":0},{"n":"tyrosine","c":"Amino acid","g":"Amino acid","a":[0.026,0.32],"u":[0.03,0.45],"sa":0,"su":0},{"n":"X - 12405","c":"Unidentified","g":"Unidentified","a":[0.087,0.32],"u":[0.182,1.07],"sa":0,"su":0},{"n":"methionine","c":"Amino acid","g":"Amino acid","a":[0.024,0.32],"u":[-0.016,0.23],"sa":0,"su":0},{"n":"3-hydroxyhippurate","c":"Xenobiotics","g":"Xenobiotics","a":[-0.131,0.31],"u":[0.313,1.22],"sa":0,"su":0},{"n":"21-hydroxypregnenolone disulfate","c":"Lipid","g":"Lipid","a":[0.073,0.31],"u":[-0.277,2.41],"sa":0,"su":1},{"n":"xanthine","c":"Nucleotide","g":"Other","a":[-0.05,0.31],"u":[0.002,0.01],"sa":0,"su":0},{"n":"X - 17130","c":"Unidentified","g":"Unidentified","a":[-0.048,0.31],"u":[-0.109,1.17],"sa":0,"su":0},{"n":"pyrophosphate (PPi)","c":"Energy","g":"Other","a":[-0.12,0.31],"u":[-0.077,0.22],"sa":0,"su":0},{"n":"X - 18901","c":"Unidentified","g":"Unidentified","a":[0.129,0.3],"u":[0.346,1.44],"sa":0,"su":0},{"n":"glycerate","c":"Carbohydrate","g":"Carbohydrate","a":[-0.037,0.3],"u":[0.012,0.1],"sa":0,"su":0},{"n":"arabitol","c":"Carbohydrate","g":"Carbohydrate","a":[0.041,0.3],"u":[0.255,5.31],"sa":0,"su":1},{"n":"tetradecanedioate","c":"Lipid","g":"Lipid","a":[0.062,0.3],"u":[0.005,0.02],"sa":0,"su":0},{"n":"1-docosapentaenoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[-0.071,0.3],"u":[-0.165,1.16],"sa":0,"su":0},{"n":"1,3-dipalmitoylglycerol","c":"Lipid","g":"Lipid","a":[0.085,0.29],"u":[0.11,0.5],"sa":0,"su":0},{"n":"stearoyl sphingomyelin","c":"Lipid","g":"Lipid","a":[-0.041,0.29],"u":[-0.143,1.86],"sa":0,"su":1},{"n":"X - 11441","c":"Unidentified","g":"Unidentified","a":[-0.07,0.29],"u":[0.012,0.04],"sa":0,"su":0},{"n":"stachydrine","c":"Xenobiotics","g":"Xenobiotics","a":[-0.125,0.29],"u":[0.241,0.8],"sa":0,"su":0},{"n":"glycerol","c":"Lipid","g":"Lipid","a":[-0.027,0.28],"u":[-0.066,0.75],"sa":0,"su":0},{"n":"X - 12822","c":"Unidentified","g":"Unidentified","a":[-0.054,0.28],"u":[0.042,0.24],"sa":0,"su":0},{"n":"X - 16480","c":"Unidentified","g":"Unidentified","a":[-0.068,0.27],"u":[-0.007,0.03],"sa":0,"su":0},{"n":"X - 19141","c":"Unidentified","g":"Unidentified","a":[-0.064,0.27],"u":[0.154,1.04],"sa":0,"su":0},{"n":"phosphate","c":"Energy","g":"Other","a":[-0.015,0.27],"u":[-0.044,1.27],"sa":0,"su":0},{"n":"gamma-glutamyltyrosine","c":"Peptide","g":"Other","a":[-0.018,0.26],"u":[0.028,0.54],"sa":0,"su":0},{"n":"sphingosine","c":"Lipid","g":"Lipid","a":[0.075,0.25],"u":[0.102,0.46],"sa":0,"su":0},{"n":"myristate (14:0)","c":"Lipid","g":"Lipid","a":[-0.057,0.25],"u":[-0.127,0.84],"sa":0,"su":0},{"n":"campesterol","c":"Lipid","g":"Lipid","a":[0.062,0.25],"u":[-0.012,0.05],"sa":0,"su":0},{"n":"2-oleoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[-0.043,0.25],"u":[-0.096,0.84],"sa":0,"su":0},{"n":"3-dehydrocarnitine*","c":"Lipid","g":"Lipid","a":[0.036,0.24],"u":[0.131,1.62],"sa":0,"su":0},{"n":"dodecanedioate","c":"Lipid","g":"Lipid","a":[0.073,0.24],"u":[-0.014,0.04],"sa":0,"su":0},{"n":"X - 12128","c":"Unidentified","g":"Unidentified","a":[0.031,0.23],"u":[-0.047,0.48],"sa":0,"su":0},{"n":"EDTA","c":"Xenobiotics","g":"Xenobiotics","a":[-0.014,0.23],"u":[-0.069,2.64],"sa":0,"su":1},{"n":"4-hydroxyhippurate","c":"Xenobiotics","g":"Xenobiotics","a":[0.071,0.23],"u":[0.225,1.31],"sa":0,"su":0},{"n":"dihomo-linoleate (20:2n6)","c":"Lipid","g":"Lipid","a":[0.056,0.23],"u":[0.022,0.09],"sa":0,"su":0},{"n":"X - 11412","c":"Unidentified","g":"Unidentified","a":[-0.053,0.23],"u":[-0.103,0.65],"sa":0,"su":0},{"n":"X - 03056","c":"Unidentified","g":"Unidentified","a":[0.036,0.23],"u":[0.153,2.1],"sa":0,"su":1},{"n":"3-indoxyl sulfate","c":"Amino acid","g":"Amino acid","a":[-0.056,0.23],"u":[0.017,0.07],"sa":0,"su":0},{"n":"laurylcarnitine","c":"Lipid","g":"Lipid","a":[-0.075,0.23],"u":[-0.139,0.59],"sa":0,"su":0},{"n":"X - 13553","c":"Unidentified","g":"Unidentified","a":[0.029,0.23],"u":[0.176,3.4],"sa":0,"su":1},{"n":"glycochenodeoxycholate","c":"Lipid","g":"Lipid","a":[-0.081,0.22],"u":[-0.095,0.32],"sa":0,"su":0},{"n":"tryptophan betaine","c":"Amino acid","g":"Amino acid","a":[0.078,0.22],"u":[0.05,0.16],"sa":0,"su":0},{"n":"X - 01911","c":"Unidentified","g":"Unidentified","a":[-0.08,0.22],"u":[-0.029,0.08],"sa":0,"su":0},{"n":"eicosenoate (20:1n9 or 11)","c":"Lipid","g":"Lipid","a":[0.055,0.22],"u":[-0.03,0.12],"sa":0,"su":0},{"n":"myristoylcarnitine","c":"Lipid","g":"Lipid","a":[-0.047,0.21],"u":[0.001,0.01],"sa":0,"su":0},{"n":"1-pentadecanoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[-0.04,0.21],"u":[-0.037,0.23],"sa":0,"su":0},{"n":"5alpha-pregnan-3beta,20alpha-diol disulfate","c":"Lipid","g":"Lipid","a":[0.079,0.21],"u":[-0.592,3.92],"sa":0,"su":1},{"n":"gamma-tocopherol","c":"Cofactors and vitamins","g":"Other","a":[-0.056,0.2],"u":[-0.075,0.32],"sa":0,"su":0},{"n":"4-methylcatechol sulfate","c":"Xenobiotics","g":"Xenobiotics","a":[-0.088,0.2],"u":[0.068,0.18],"sa":0,"su":0},{"n":"stearate (18:0)","c":"Lipid","g":"Lipid","a":[0.03,0.2],"u":[-0.05,0.43],"sa":0,"su":0},{"n":"X - 01497","c":"Unidentified","g":"Unidentified","a":[-0.046,0.2],"u":[-0.08,0.49],"sa":0,"su":0},{"n":"X - 11452","c":"Unidentified","g":"Unidentified","a":[-0.082,0.2],"u":[-0.115,0.37],"sa":0,"su":0},{"n":"1-heptadecanoylglycerophosphocholine","c":"Lipid","g":"Lipid","a":[-0.047,0.2],"u":[-0.054,0.27],"sa":0,"su":0},{"n":"1-stearoylglycerophosphoethanolamine","c":"Lipid","g":"Lipid","a":[-0.031,0.2],"u":[0.004,0.03],"sa":0,"su":0},{"n":"adrenate (22:4n6)","c":"Lipid","g":"Lipid","a":[0.034,0.19],"u":[-0.015,0.09],"sa":0,"su":0},{"n":"X - 17502","c":"Unidentified","g":"Unidentified","a":[0.04,0.19],"u":[0.008,0.04],"sa":0,"su":0},{"n":"taurocholenate sulfate*","c":"Lipid","g":"Lipid","a":[0.059,0.19],"u":[-0.105,0.48],"sa":0,"su":0},{"n":"scyllo-inositol","c":"Lipid","g":"Lipid","a":[0.041,0.19],"u":[0.304,3.82],"sa":0,"su":1},{"n":"HWESASLLR","c":"Peptide","g":"Other","a":[0.05,0.19],"u":[-0.015,0.06],"sa":0,"su":0},{"n":"X - 15808","c":"Unidentified","g":"Unidentified","a":[-0.021,0.19],"u":[-0.095,1.64],"sa":0,"su":0},{"n":"X - 18922","c":"Unidentified","g":"Unidentified","a":[-0.053,0.19],"u":[0.024,0.09],"sa":0,"su":0},{"n":"X - 16946","c":"Unidentified","g":"Unidentified","a":[-0.043,0.19],"u":[-0.038,0.18],"sa":0,"su":0},{"n":"pregnenolone sulfate","c":"Lipid","g":"Lipid","a":[0.047,0.18],"u":[-0.361,3.39],"sa":0,"su":1},{"n":"3-carboxy-4-methyl-5-propyl-2-furanpropanoate (CMPF)","c":"Lipid","g":"Lipid","a":[0.095,0.18],"u":[0.275,0.84],"sa":0,"su":0},{"n":"X - 11444","c":"Unidentified","g":"Unidentified","a":[-0.05,0.18],"u":[-0.065,0.29],"sa":0,"su":0},{"n":"stearoylcarnitine","c":"Lipid","g":"Lipid","a":[-0.04,0.18],"u":[-0.037,0.19],"sa":0,"su":0},{"n":"X - 18913","c":"Unidentified","g":"Unidentified","a":[0.043,0.18],"u":[-0.017,0.07],"sa":0,"su":0},{"n":"X - 12850","c":"Unidentified","g":"Unidentified","a":[0.059,0.18],"u":[0.012,0.04],"sa":0,"su":0},{"n":"1-methylurate","c":"Xenobiotics","g":"Xenobiotics","a":[-0.052,0.18],"u":[0.195,1.22],"sa":0,"su":0},{"n":"X - 12510","c":"Unidentified","g":"Unidentified","a":[0.044,0.18],"u":[0.142,0.95],"sa":0,"su":0},{"n":"palmitate, methyl ester","c":"Lipid","g":"Lipid","a":[0.027,0.18],"u":[-0.015,0.11],"sa":0,"su":0},{"n":"4-vinylphenol sulfate","c":"Xenobiotics","g":"Xenobiotics","a":[-0.06,0.18],"u":[0.089,0.33],"sa":0,"su":0},{"n":"choline","c":"Lipid","g":"Lipid","a":[-0.016,0.17],"u":[0.008,0.1],"sa":0,"su":0},{"n":"10-undecenoate (11:1n1)","c":"Lipid","g":"Lipid","a":[-0.037,0.17],"u":[-0.013,0.06],"sa":0,"su":0},{"n":"X - 11247","c":"Unidentified","g":"Unidentified","a":[0.059,0.17],"u":[0.222,1.16],"sa":0,"su":0},{"n":"dehydroisoandrosterone sulfate (DHEA-S)","c":"Lipid","g":"Lipid","a":[0.054,0.17],"u":[-0.504,4.2],"sa":0,"su":1},{"n":"thymol sulfate","c":"Xenobiotics","g":"Xenobiotics","a":[0.116,0.17],"u":[0.585,1.8],"sa":0,"su":0},{"n":"allantoin","c":"Nucleotide","g":"Other","a":[0.048,0.17],"u":[0.24,1.75],"sa":0,"su":0},{"n":"1-myristoylglycerophosphocholine","c":"Lipid","g":"Lipid","a":[0.042,0.17],"u":[-0.041,0.19],"sa":0,"su":0},{"n":"X - 19137","c":"Unidentified","g":"Unidentified","a":[-0.028,0.17],"u":[0.017,0.1],"sa":0,"su":0},{"n":"1-eicosatrienoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[-0.035,0.16],"u":[-0.063,0.4],"sa":0,"su":0},{"n":"2-hydroxyisobutyrate","c":"Xenobiotics","g":"Xenobiotics","a":[-0.025,0.16],"u":[0.182,2.82],"sa":0,"su":1},{"n":"1-palmitoylglycerophosphoethanolamine","c":"Lipid","g":"Lipid","a":[0.047,0.16],"u":[0.114,0.59],"sa":0,"su":0},{"n":"2-arachidonoylglycerophosphoethanolamine*","c":"Lipid","g":"Lipid","a":[-0.033,0.16],"u":[0.092,0.68],"sa":0,"su":0},{"n":"S-methylcysteine","c":"Amino acid","g":"Amino acid","a":[0.027,0.15],"u":[0.038,0.27],"sa":0,"su":0},{"n":"caffeine","c":"Xenobiotics","g":"Xenobiotics","a":[0.064,0.15],"u":[0.398,2.1],"sa":0,"su":1},{"n":"X - 12511","c":"Unidentified","g":"Unidentified","a":[-0.037,0.15],"u":[0.246,2.08],"sa":0,"su":1},{"n":"2-arachidonoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[-0.034,0.14],"u":[-0.02,0.09],"sa":0,"su":0},{"n":"2-methylbutyrylcarnitine (C5)","c":"Amino acid","g":"Amino acid","a":[-0.019,0.14],"u":[0.102,1.48],"sa":0,"su":0},{"n":"X - 17375","c":"Unidentified","g":"Unidentified","a":[0.023,0.14],"u":[-0.088,0.9],"sa":0,"su":0},{"n":"stearamide","c":"Lipid","g":"Lipid","a":[-0.025,0.14],"u":[-0.048,0.35],"sa":0,"su":0},{"n":"1-oleoylglycerophosphoethanolamine","c":"Lipid","g":"Lipid","a":[-0.046,0.13],"u":[-0.115,0.49],"sa":0,"su":0},{"n":"X - 17425","c":"Unidentified","g":"Unidentified","a":[0.016,0.13],"u":[0.106,1.93],"sa":0,"su":1},{"n":"threonine","c":"Amino acid","g":"Amino acid","a":[-0.02,0.13],"u":[-0.195,3.26],"sa":0,"su":1},{"n":"gamma-glutamylleucine","c":"Peptide","g":"Other","a":[0.013,0.13],"u":[0.111,2.59],"sa":0,"su":1},{"n":"X - 16089","c":"Unidentified","g":"Unidentified","a":[0.024,0.13],"u":[-0.142,1.55],"sa":0,"su":0},{"n":"erythronate*","c":"Carbohydrate","g":"Carbohydrate","a":[-0.013,0.12],"u":[0.157,4.28],"sa":0,"su":1},{"n":"X - 12216","c":"Unidentified","g":"Unidentified","a":[-0.052,0.12],"u":[-0.016,0.04],"sa":0,"su":0},{"n":"paraxanthine","c":"Xenobiotics","g":"Xenobiotics","a":[-0.05,0.12],"u":[0.254,1.17],"sa":0,"su":0},{"n":"X - 12407","c":"Unidentified","g":"Unidentified","a":[0.068,0.12],"u":[0.298,0.95],"sa":0,"su":0},{"n":"X - 12056","c":"Unidentified","g":"Unidentified","a":[-0.087,0.12],"u":[0.297,0.64],"sa":0,"su":0},{"n":"N-acetylphenylalanine","c":"Amino acid","g":"Amino acid","a":[0.02,0.12],"u":[0.167,2.42],"sa":0,"su":1},{"n":"X - 12734","c":"Unidentified","g":"Unidentified","a":[0.062,0.11],"u":[0.303,0.99],"sa":0,"su":0},{"n":"xylonate","c":"Carbohydrate","g":"Carbohydrate","a":[0.028,0.11],"u":[0.252,2.43],"sa":0,"su":1},{"n":"citrate","c":"Energy","g":"Other","a":[0.011,0.11],"u":[0.037,0.56],"sa":0,"su":0},{"n":"X - 12095","c":"Unidentified","g":"Unidentified","a":[0.023,0.11],"u":[0.165,1.73],"sa":0,"su":0},{"n":"epiandrosterone sulfate","c":"Lipid","g":"Lipid","a":[-0.037,0.11],"u":[-0.288,1.62],"sa":0,"su":0},{"n":"X - 02269","c":"Unidentified","g":"Unidentified","a":[-0.06,0.11],"u":[-0.066,0.14],"sa":0,"su":0},{"n":"gamma-glutamylvaline","c":"Peptide","g":"Other","a":[0.01,0.11],"u":[0.146,4.73],"sa":0,"su":1},{"n":"palmitate (16:0)","c":"Lipid","g":"Lipid","a":[0.018,0.1],"u":[-0.05,0.38],"sa":0,"su":0},{"n":"X - 12212","c":"Unidentified","g":"Unidentified","a":[0.046,0.1],"u":[0.256,1.09],"sa":0,"su":0},{"n":"X - 11533","c":"Unidentified","g":"Unidentified","a":[-0.011,0.1],"u":[-0.04,0.61],"sa":0,"su":0},{"n":"2-hydroxyglutarate","c":"Lipid","g":"Lipid","a":[0.024,0.1],"u":[0.022,0.11],"sa":0,"su":0},{"n":"taurochenodeoxycholate","c":"Lipid","g":"Lipid","a":[0.049,0.1],"u":[0.042,0.1],"sa":0,"su":0},{"n":"phenol sulfate","c":"Amino acid","g":"Amino acid","a":[-0.028,0.1],"u":[0.117,0.66],"sa":0,"su":0},{"n":"heme","c":"Cofactors and vitamins","g":"Other","a":[-0.022,0.09],"u":[0.022,0.1],"sa":0,"su":0},{"n":"glycolate (hydroxyacetate)","c":"Xenobiotics","g":"Xenobiotics","a":[0.007,0.09],"u":[-0.017,0.29],"sa":0,"su":0},{"n":"theophylline","c":"Xenobiotics","g":"Xenobiotics","a":[-0.033,0.09],"u":[0.18,0.87],"sa":0,"su":0},{"n":"X - 18929","c":"Unidentified","g":"Unidentified","a":[-0.02,0.09],"u":[-0.061,0.38],"sa":0,"su":0},{"n":"X - 17137","c":"Unidentified","g":"Unidentified","a":[0.045,0.09],"u":[-0.025,0.06],"sa":0,"su":0},{"n":"X - 17706","c":"Unidentified","g":"Unidentified","a":[0.02,0.09],"u":[0.019,0.09],"sa":0,"su":0},{"n":"X - 11880","c":"Unidentified","g":"Unidentified","a":[0.016,0.09],"u":[-0.191,2.61],"sa":0,"su":1},{"n":"tryptophan","c":"Amino acid","g":"Amino acid","a":[-0.007,0.08],"u":[-0.041,0.96],"sa":0,"su":0},{"n":"X - 12100","c":"Unidentified","g":"Unidentified","a":[0.012,0.08],"u":[0.053,0.61],"sa":0,"su":0},{"n":"laurate (12:0)","c":"Lipid","g":"Lipid","a":[-0.022,0.08],"u":[-0.178,1.23],"sa":0,"su":0},{"n":"glycocholate","c":"Lipid","g":"Lipid","a":[0.032,0.08],"u":[-0.04,0.12],"sa":0,"su":0},{"n":"1-methylxanthine","c":"Xenobiotics","g":"Xenobiotics","a":[0.023,0.08],"u":[0.115,0.65],"sa":0,"su":0},{"n":"X - 11378","c":"Unidentified","g":"Unidentified","a":[-0.027,0.08],"u":[0.195,1.0],"sa":0,"su":0},{"n":"N1-methyladenosine","c":"Nucleotide","g":"Other","a":[-0.007,0.07],"u":[0.013,0.17],"sa":0,"su":0},{"n":"1-palmitoylglycerophosphocholine","c":"Lipid","g":"Lipid","a":[0.009,0.07],"u":[-0.044,0.59],"sa":0,"su":0},{"n":"X - 11469","c":"Unidentified","g":"Unidentified","a":[-0.04,0.07],"u":[-0.085,0.19],"sa":0,"su":0},{"n":"threonate","c":"Cofactors and vitamins","g":"Other","a":[-0.017,0.07],"u":[0.015,0.07],"sa":0,"su":0},{"n":"1,11-Undecanedicarboxylic acid","c":"Lipid","g":"Lipid","a":[0.019,0.07],"u":[-0.022,0.1],"sa":0,"su":0},{"n":"pregn steroid monosulfate*","c":"Lipid","g":"Lipid","a":[0.02,0.07],"u":[-0.436,4.24],"sa":0,"su":1},{"n":"2-palmitoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[-0.014,0.06],"u":[-0.074,0.54],"sa":0,"su":0},{"n":"alpha-tocopherol","c":"Cofactors and vitamins","g":"Other","a":[0.008,0.06],"u":[0.02,0.21],"sa":0,"su":0},{"n":"X - 15664","c":"Unidentified","g":"Unidentified","a":[-0.046,0.06],"u":[-0.1,0.18],"sa":0,"su":0},{"n":"X - 16932","c":"Unidentified","g":"Unidentified","a":[-0.03,0.06],"u":[-0.076,0.19],"sa":0,"su":0},{"n":"X - 13557","c":"Unidentified","g":"Unidentified","a":[0.015,0.06],"u":[-0.046,0.22],"sa":0,"su":0},{"n":"mannitol","c":"Carbohydrate","g":"Carbohydrate","a":[-0.029,0.06],"u":[0.401,1.72],"sa":0,"su":0},{"n":"X - 19380","c":"Unidentified","g":"Unidentified","a":[0.007,0.05],"u":[-0.086,1.34],"sa":0,"su":0},{"n":"3-hydroxy-2-ethylpropionate","c":"Amino acid","g":"Amino acid","a":[0.011,0.05],"u":[0.139,1.46],"sa":0,"su":0},{"n":"threitol","c":"Carbohydrate","g":"Carbohydrate","a":[0.011,0.05],"u":[0.275,4.02],"sa":0,"su":1},{"n":"trigonelline (N'-methylnicotinate)","c":"Cofactors and vitamins","g":"Other","a":[-0.02,0.05],"u":[0.382,2.68],"sa":0,"su":1},{"n":"p-cresol sulfate","c":"Amino acid","g":"Amino acid","a":[0.03,0.05],"u":[0.227,0.65],"sa":0,"su":0},{"n":"cystine","c":"Amino acid","g":"Amino acid","a":[-0.014,0.05],"u":[0.142,0.92],"sa":0,"su":0},{"n":"nicotinamide","c":"Cofactors and vitamins","g":"Other","a":[0.012,0.05],"u":[-0.126,1.0],"sa":0,"su":0},{"n":"1-docosahexaenoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[-0.013,0.05],"u":[-0.075,0.42],"sa":0,"su":0},{"n":"2-palmitoleoylglycerophosphocholine*","c":"Lipid","g":"Lipid","a":[-0.013,0.05],"u":[-0.096,0.62],"sa":0,"su":0},{"n":"hypoxanthine","c":"Nucleotide","g":"Other","a":[0.011,0.05],"u":[-0.048,0.31],"sa":0,"su":0},{"n":"X - 18779","c":"Unidentified","g":"Unidentified","a":[-0.008,0.05],"u":[-0.209,3.54],"sa":0,"su":1},{"n":"X - 16938","c":"Unidentified","g":"Unidentified","a":[0.009,0.05],"u":[0.017,0.12],"sa":0,"su":0},{"n":"propionylcarnitine","c":"Lipid","g":"Lipid","a":[-0.006,0.04],"u":[0.111,1.71],"sa":0,"su":0},{"n":"stearidonate (18:4n3)","c":"Lipid","g":"Lipid","a":[0.017,0.04],"u":[-0.098,0.33],"sa":0,"su":0},{"n":"gamma-glutamylisoleucine*","c":"Peptide","g":"Other","a":[-0.005,0.04],"u":[0.072,1.23],"sa":0,"su":0},{"n":"5,6-dihydrouracil","c":"Nucleotide","g":"Other","a":[-0.006,0.03],"u":[0.028,0.2],"sa":0,"su":0},{"n":"butyrylcarnitine","c":"Lipid","g":"Lipid","a":[-0.007,0.03],"u":[0.099,0.78],"sa":0,"su":0},{"n":"1,3,7-trimethylurate","c":"Xenobiotics","g":"Xenobiotics","a":[-0.011,0.03],"u":[0.411,2.64],"sa":0,"su":1},{"n":"margarate (17:0)","c":"Lipid","g":"Lipid","a":[0.006,0.03],"u":[0.012,0.05],"sa":0,"su":0},{"n":"3-methylxanthine","c":"Xenobiotics","g":"Xenobiotics","a":[-0.007,0.02],"u":[0.045,0.17],"sa":0,"su":0},{"n":"cortisol","c":"Lipid","g":"Lipid","a":[-0.006,0.02],"u":[-0.108,0.58],"sa":0,"su":0},{"n":"X - 11372","c":"Unidentified","g":"Unidentified","a":[-0.004,0.02],"u":[-0.223,3.56],"sa":0,"su":1},{"n":"gamma-glutamylphenylalanine","c":"Peptide","g":"Other","a":[-0.002,0.02],"u":[0.059,1.14],"sa":0,"su":0},{"n":"indoleacetate","c":"Amino acid","g":"Amino acid","a":[-0.004,0.02],"u":[0.04,0.24],"sa":0,"su":0},{"n":"glycocholenate sulfate*","c":"Lipid","g":"Lipid","a":[0.004,0.01],"u":[-0.097,0.64],"sa":0,"su":0},{"n":"X - 11905","c":"Unidentified","g":"Unidentified","a":[-0.004,0.01],"u":[-0.076,0.39],"sa":0,"su":0},{"n":"gamma-CEHC","c":"Cofactors and vitamins","g":"Other","a":[0.004,0.01],"u":[-0.175,1.24],"sa":0,"su":0},{"n":"X - 12051","c":"Unidentified","g":"Unidentified","a":[-0.004,0.01],"u":[-0.076,0.3],"sa":0,"su":0},{"n":"undecanoate (11:0)","c":"Lipid","g":"Lipid","a":[-0.0,0.0],"u":[-0.033,0.55],"sa":0,"su":0},{"n":"2-palmitoylglycerophosphoethanolamine*","c":"Lipid","g":"Lipid","a":[-0.001,0.0],"u":[0.118,0.54],"sa":0,"su":0},{"n":"X - 12231","c":"Unidentified","g":"Unidentified","a":[-0.001,0.0],"u":[-0.048,0.14],"sa":0,"su":0}],"groups":["All","Carbohydrate","Amino acid","Lipid","Xenobiotics","Unidentified","Other"],"picks":["1,5-anhydroglucitol (1,5-AG)","glucose","mannose","myo-inositol","caffeine","leucine"],"sig":60,"sigUn":155,"kept":501,"quiz":[{"label":"Glucose","hint":"blood sugar itself","rank":2,"nlp":24.08},{"label":"Cholesterol","hint":"the heart-health one","rank":142,"nlp":1.23},{"label":"1,5-anhydroglucitol","hint":"a sugar from food","rank":1,"nlp":29.51},{"label":"Caffeine","hint":"your morning coffee","rank":416,"nlp":0.15}],"stairs":[{"band":"under 5.5","rel":1.0,"n":74,"dx":false},{"band":"5.5 to 6.4","rel":1.014,"n":126,"dx":false},{"band":"6.5 to 7.9","rel":0.534,"n":66,"dx":true},{"band":"8 to 9.9","rel":0.217,"n":62,"dx":true},{"band":"10 and over","rel":0.106,"n":25,"dx":true}],"metformin":[51,3]};
+var css = getComputedStyle(document.documentElement);
+function tok(n){return css.getPropertyValue(n).trim()}
+var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function el(tag,attrs,text){var e=document.createElement(tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;return e}
+var NS='http://www.w3.org/2000/svg';
+function sv(tag,attrs,text){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;return e}
+
+/* ---------- hero dot field ---------- */
+(function(){
+  var cv=document.getElementById('field'),ctx=cv.getContext('2d');
+  var cats=[];var c=D.counts,i;
+  for(i=0;i<c.dropped;i++)cats.push(0);
+  for(i=0;i<c.ns;i++)cats.push(1);
+  for(i=0;i<c.up;i++)cats.push(2);
+  for(i=0;i<c.down;i++)cats.push(3);
+  var r=rng(7);
+  for(i=cats.length-1;i>0;i--){var j=Math.floor(r()*(i+1)),t=cats[i];cats[i]=cats[j];cats[j]=t}
+  var stage=3,timer=null;
+  var col={all:'#CDBBCB',dim:tok('--dim'),plasma:tok('--plasma'),pd:tok('--plasma-dim'),up:tok('--case'),down:tok('--ctrl')};
+  function draw(){
+    var w=cv.clientWidth||600,gap=w<480?11:14,cols=Math.max(10,Math.floor(w/gap)),rows=Math.ceil(cats.length/cols);
+    var h=rows*gap,dpr=window.devicePixelRatio||1;
+    cv.style.height=h+'px';cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+    var off=(w-cols*gap)/2;
+    for(var k=0;k<cats.length;k++){
+      var cat=cats[k],f;
+      if(stage===1)f=col.all;
+      else if(cat===0)f=col.dim;
+      else if(stage===2)f=col.plasma;
+      else f=cat===2?col.up:cat===3?col.down:col.pd;
+      var big=stage===3&&cat>1;
+      ctx.beginPath();
+      ctx.arc(off+(k%cols)*gap+gap/2,Math.floor(k/cols)*gap+gap/2,gap*(big?0.4:0.28),0,6.2832);
+      ctx.fillStyle=f;ctx.fill();
+    }
+  }
+  var btn=[null,document.getElementById('st1'),document.getElementById('st2'),document.getElementById('st3')];
+  function set(s){stage=s;for(var k=1;k<=3;k++)btn[k].setAttribute('aria-pressed',k===s);draw()}
+  [1,2,3].forEach(function(s){btn[s].addEventListener('click',function(){clearTimeout(timer);set(s)})});
+  document.getElementById('replay').addEventListener('click',function(){
+    clearTimeout(timer);set(1);
+    timer=setTimeout(function(){set(2);timer=setTimeout(function(){set(3)},reduce?0:1100)},reduce?0:1100);
+  });
+  window.addEventListener('resize',draw);
+  set(3);
+})();
+
+/* ---------- chapter 1: missingness slider ---------- */
+(function(){
+  var miss=D.missing.slice().sort(function(a,b){return b-a}),n=miss.length;
+  var W=700,H=190,L=40,R=8,T=8,B=22;
+  var svg=document.getElementById('misschart');
+  function x(i){return L+i/(n-1)*(W-L-R)}
+  function y(m){return T+(1-m)*(H-T-B)}
+  function area(from,to){
+    var d='M'+x(from).toFixed(1)+' '+y(0);
+    for(var i=from;i<=to;i++)d+=' L'+x(i).toFixed(1)+' '+y(miss[i]).toFixed(1);
+    return d+' L'+x(to).toFixed(1)+' '+y(0)+' Z';
+  }
+  [0,50,100].forEach(function(t){
+    svg.appendChild(sv('line',{'class':'gl',x1:L,x2:W-R,y1:y(t/100),y2:y(t/100)}));
+    svg.appendChild(sv('text',{'class':'ax',x:L-6,y:y(t/100)+4,'text-anchor':'end'},t+'%'));
+  });
+  svg.appendChild(sv('text',{'class':'ax',x:L,y:H-4},'most often missing'));
+  svg.appendChild(sv('text',{'class':'ax',x:W-R,y:H-4,'text-anchor':'end'},'never missing'));
+  var all=sv('path',{d:area(0,n-1),fill:tok('--dim')});svg.appendChild(all);
+  var keptPath=sv('path',{d:'',fill:tok('--plasma')});svg.appendChild(keptPath);
+  var line=sv('line',{x1:L,x2:W-R,y1:0,y2:0,stroke:tok('--ink'),'stroke-width':1.5,'stroke-dasharray':'5 4'});svg.appendChild(line);
+
+  var chips=document.getElementById('chips'),chipEls=[];
+  D.chips.forEach(function(c){
+    var e=el('div',{'class':'chip'});e.appendChild(el('b',{},c.label));
+    var s=el('small',{});e.appendChild(s);chips.appendChild(e);chipEls.push([e,s,c]);
+  });
+  var input=document.getElementById('cut'),out=document.getElementById('cutv'),keptn=document.getElementById('keptn');
+  function update(){
+    var cut=+input.value/100,drop=0;
+    while(drop<n&&miss[drop]>cut)drop++;
+    out.textContent=input.value+'%';keptn.textContent=n-drop;
+    keptPath.setAttribute('d',drop<n?area(drop,n-1):'');
+    line.setAttribute('y1',y(cut));line.setAttribute('y2',y(cut));
+    chipEls.forEach(function(a){
+      var keep=a[2].missing<=cut;
+      a[0].className='chip '+(keep?'kept':'out');
+      a[1].textContent='in '+Math.round((1-a[2].missing)*100)+'% of people · '+(keep?'kept':'dropped');
+    });
+  }
+  input.addEventListener('input',update);
+  document.getElementById('cutreset').addEventListener('click',function(){input.value=30;update()});
+  update();
+})();
+
+/* ---------- chapter 2: volcano ---------- */
+(function(){
+  var svg=document.getElementById('volcano'),M=D.mets;
+  var W=760,H=470,L=46,R=16,T=16,B=44,X0=-1.75,X1=1.45,Y1=38;
+  function x(v){return L+(v-X0)/(X1-X0)*(W-L-R)}
+  function y(v){return T+(1-v/Y1)*(H-T-B)}
+  for(var t=0;t<=35;t+=5){
+    svg.appendChild(sv('line',{'class':'gl',x1:L,x2:W-R,y1:y(t),y2:y(t)}));
+    svg.appendChild(sv('text',{'class':'ax',x:L-8,y:y(t)+4,'text-anchor':'end'},t));
+  }
+  svg.appendChild(sv('line',{x1:x(0),x2:x(0),y1:T,y2:H-B,stroke:tok('--muted'),'stroke-width':1,'stroke-dasharray':'2 4'}));
+  [[-1.5,'⅓×'],[-1,'½×'],[-0.5,'0.7×'],[0,'same'],[0.5,'1.4×'],[1,'2×']].forEach(function(a){
+    svg.appendChild(sv('text',{'class':'ax',x:x(a[0]),y:H-B+16,'text-anchor':'middle'},a[1]));
+  });
+  svg.appendChild(sv('text',{'class':'ax',x:L,y:H-6},'← lower in diabetes'));
+  svg.appendChild(sv('text',{'class':'ax',x:W-R,y:H-6,'text-anchor':'end'},'higher in diabetes →'));
+  svg.appendChild(sv('text',{'class':'ax',x:L+6,y:T+10},'↑ stronger evidence'));
+
+  var adjusted=false,selected=-1,cls='All';
+  var dots=M.map(function(m,i){
+    var c=sv('circle',{'class':'m',r:3.4,cx:0,cy:0});
+    c.addEventListener('click',function(){select(i)});
+    svg.appendChild(c);return c;
+  });
+  var ring=sv('circle',{id:'ring',r:8,cx:0,cy:0});ring.style.display='none';svg.appendChild(ring);
+
+  function pos(m){var p=adjusted?m.a:m.u;return 'translate('+x(p[0]).toFixed(1)+'px,'+y(p[1]).toFixed(1)+'px)'}
+  function sig(m){return adjusted?m.sa:m.su}
+  function paint(){
+    M.forEach(function(m,i){
+      var c=dots[i];c.style.transform=pos(m);
+      var k='m'+(sig(m)?(( adjusted?m.a[0]:m.u[0])>0?' up':' down'):'');
+      if(cls!=='All'&&m.g!==cls)k+=' fade';
+      c.setAttribute('class',k);
+    });
+    if(selected>=0){ring.style.display='';ring.style.transform=pos(M[selected])}
+  }
+  function fmtP(nlp){var p=Math.pow(10,-nlp);if(p>=0.001)return p.toFixed(3);var e=Math.floor(Math.log10(p));return (p/Math.pow(10,e)).toFixed(1)+'×10^'+e}
+  var info=document.getElementById('info');
+  function select(i){
+    selected=i;var m=M[i],p=adjusted?m.a:m.u,f=Math.pow(2,p[0]);
+    info.textContent='';
+    var head=el('div',{});head.appendChild(el('b',{},m.n));head.appendChild(el('span',{'class':'tag'},m.c));info.appendChild(head);
+    var line=f.toFixed(2)+'× the level in people without diabetes · p = '+fmtP(p[1])+' ('+(adjusted?'adjusted':'raw')+')';
+    info.appendChild(el('div',{'class':'num'},line));
+    var story=m.su&&m.sa?'Stands out before and after the adjustment.':m.su&&!m.sa?'Stood out in the raw comparison. Fades once age, sex and BMI are accounted for.':!m.su&&m.sa?'Hidden in the raw comparison. Appears once age, sex and BMI are accounted for.':'No clear difference either way.';
+    info.appendChild(el('div',{'class':'muted'},story));
+    paint();
+  }
+  info.appendChild(el('div',{'class':'muted'},'Every dot is one molecule. Pink is higher in diabetes, teal is lower, grey shows no clear difference.'));
+
+  var count=document.getElementById('vcount'),label=document.getElementById('vlabel'),mode=document.getElementById('vmode'),btn=document.getElementById('adjust');
+  function tween(from,to){
+    if(reduce){count.textContent=to;return}
+    var t0=null;function step(ts){if(!t0)t0=ts;var k=Math.min(1,(ts-t0)/900);count.textContent=Math.round(from+(to-from)*k);if(k<1)requestAnimationFrame(step)}
+    requestAnimationFrame(step);
+  }
+  btn.addEventListener('click',function(){
+    adjusted=!adjusted;
+    tween(adjusted?D.sigUn:D.sig,adjusted?D.sig:D.sigUn);
+    label.textContent=adjusted?'molecules still differ after the adjustment':'molecules look different between the groups';
+    mode.textContent=adjusted?'Showing: adjusted for age, sex and BMI':'Showing: raw comparison';
+    btn.textContent=adjusted?'Back to the raw comparison':'Account for age, sex and BMI';
+    if(selected>=0)select(selected);else paint();
+  });
+
+  var classes=document.getElementById('classes');
+  D.groups.forEach(function(g){
+    var b=el('button',{type:'button','class':'small','aria-pressed':g==='All'},g);
+    b.addEventListener('click',function(){
+      cls=g;Array.prototype.forEach.call(classes.children,function(o){o.setAttribute('aria-pressed',o===b)});paint();
+    });
+    classes.appendChild(b);
+  });
+  var picks=document.getElementById('picks');
+  D.picks.forEach(function(name){
+    var i=M.findIndex(function(m){return m.n===name});if(i<0)return;
+    var b=el('button',{type:'button','class':'small'},M[i].s||name);
+    b.addEventListener('click',function(){select(i)});picks.appendChild(b);
+  });
+  paint();
+})();
+
+/* ---------- chapter 3: quiz + staircase ---------- */
+(function(){
+  var opts=document.getElementById('opts'),rank=document.getElementById('rank'),reveal=document.getElementById('reveal'),verdict=document.getElementById('verdict');
+  var max=Math.max.apply(null,D.quiz.map(function(q){return q.nlp}));
+  var order=D.quiz.slice().sort(function(a,b){return a.rank-b.rank});
+  order.forEach(function(q){
+    rank.appendChild(el('span',{},q.label));
+    var bar=el('i',{});bar.style.width=Math.max(1,q.nlp/max*100)+'%';
+    var holder=el('span',{});holder.appendChild(bar);rank.appendChild(holder);
+    rank.appendChild(el('span',{'class':'num'},'#'+q.rank+' of '+D.kept));
+  });
+  D.quiz.forEach(function(q){
+    var b=el('button',{type:'button'},q.label);b.appendChild(el('small',{},q.hint));
+    b.addEventListener('click',function(){
+      Array.prototype.forEach.call(opts.children,function(o,i){o.className=D.quiz[i].rank===1?'right':(o===b?'wrong':'')});
+      reveal.hidden=false;
+      verdict.textContent=q.rank===1?'Right. Most people pick glucose.':q.rank===2?'Close. Glucose comes second. The bar shows the strength of evidence for each.':'Not this one. The bar shows the strength of evidence for each.';
+    });
+    opts.appendChild(b);
+  });
+  var stairs=document.getElementById('stairs'),lab=document.getElementById('stairlab');
+  var top=Math.max.apply(null,D.stairs.map(function(s){return s.rel}));
+  D.stairs.forEach(function(s){
+    var c=el('div',{'class':'stair'+(s.dx?' dx':'')});
+    c.appendChild(el('b',{},Math.round(s.rel*100)+'%'));
+    var bar=el('i',{});bar.style.height=(s.rel/top*82)+'%';c.appendChild(bar);stairs.appendChild(c);
+    var l=el('div',{});l.appendChild(el('b',{},s.band));l.appendChild(document.createTextNode(s.n+' people'));lab.appendChild(l);
+  });
+})();
+
+/* ---------- chapter 4: people grids ---------- */
+[['pg1',D.metformin[0]],['pg2',D.metformin[1]]].forEach(function(a){
+  var g=document.getElementById(a[0]);
+  for(var i=0;i<100;i++)g.appendChild(el('i',i<a[1]?{'class':'on'}:{}));
+});
+})();
+</script>
+
+</body></html>
